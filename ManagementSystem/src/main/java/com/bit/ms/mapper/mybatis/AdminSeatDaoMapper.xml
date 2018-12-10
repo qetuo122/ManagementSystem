@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace - 인터페이스에 있는 패키지 명 + 인터페이스 명 -->
+<mapper namespace="com.bit.ms.dao.AdminDaoInterface">
+
+	<!-- 좌석리스트 불러오기 -->
+	<select id="getSeatListI" resultType="seatVO">
+
+		<![CDATA[select * from seat where store_id = #{store_id} order by ${order_by} ${sort}]]>
+
+	</select>
+	<!-- 좌석리스트 불러오기 -->
+
+	<insert id="addSeatI" parameterType="SeatVO"
+		useGeneratedKeys="true" keyProperty="seat_id">
+
+		insert into seat(seat_name,
+		seat_pay, seat_qr, store_id)
+		values(#{seat_name}, #{seat_pay}, #{seat_qr}, #{store_id})
+
+	</insert>
+
+	<delete id="deleteSeatI" parameterType="int">
+
+		delete from seat where
+		seat_id = #{seat_id}
+
+	</delete>
+
+	<update id="modifySeatI" parameterType="seatVO">
+
+		update seat
+		set seat_name=#{seat_name}, seat_pay=#{seat_pay}
+		where seat_id=#{seat_id}
+
+	</update>
+	
+	<!--qr코드 추가  -->
+	<update id="addQrI" parameterType="hashmap">
+		update seat set seat_qr = #{seat_qr} where seat_id = #{seat_id}
+	</update>
+	
+	<!-- qr코드 불러오는  -->
+	<select id="getQrI" resultType="String">
+		select seat_qr from seat where seat_id = #{seat_id}
+	</select>
+
+</mapper>

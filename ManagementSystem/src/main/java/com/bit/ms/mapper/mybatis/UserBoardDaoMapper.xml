@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.ms.dao.UserDaoInterface">
+
+	<select id="UserBoardSelectList" parameterType="map"
+		resultType="UserBoardVO">
+
+		select * from userboard where store_id = #{param1}
+		and
+		(uboard_con like CONCAT('%',#{param2},'%') or uboard_title like
+		CONCAT('%',#{param2},'%'))
+		order by uboard_id desc limit #{param3}, 10;
+
+	</select>
+
+	<select id="UserBoardTotalCount" resultType="int">
+
+		select count(*) from
+		userboard where store_id=#{param1}
+		and (uboard_con like
+		CONCAT('%',#{param2},'%') or uboard_title like
+		CONCAT('%',#{param2},'%'))
+
+	</select>
+
+	<select id="getUserBoardNoticeI" parameterType="map"
+		resultType="UserBoardVO">
+
+		select * from
+		userboard where store_id=#{param1} and
+		writer_id = #{param2}
+		order by uboard_id desc limit 3
+
+	</select>
+
+	<insert id="insertUserBoard" parameterType="UserBoardVO"
+		useGeneratedKeys="true" keyProperty="uboard_id">
+
+		insert into userboard
+		(uboard_title, uboard_con, writer_id, store_id )
+		values(#{uboard_title}, #{uboard_con},#{writer_id},#{store_id})
+
+	</insert>
+
+	<select id="getUserBoardViewI" resultType="UserBoardVO">
+
+		select * from
+		userboard where uboard_id=#{uboard_id}
+
+	</select>
+
+	<delete id="UserBoardDeleteI" parameterType="UserBoardVO">
+		delete from
+		userboard
+		where uboard_id=#{uboard_id}
+	</delete>
+
+	<update id="UserBoardModifyI" parameterType="UserBoardVO">
+		update userboard set
+		uboard_title=#{uboard_title}, uboard_con=#{uboard_con}
+		where
+		uboard_id=#{uboard_id}
+	</update>
+
+	<select id="getNextNUM" resultType="int">
+
+		select ifnull( min( uboard_id ), -1 ) from userboard where uboard_id>#{uboard_id}
+		and store_id=#{store_id}
+		and (uboard_con like
+		CONCAT('%',#{keyword},'%') or uboard_title like
+		CONCAT('%',#{keyword},'%'))
+
+	</select>
+
+	<select id="getPreviousNUM" resultType="int">
+
+		select ifnull( max( uboard_id ), -1 ) from userboard where
+		store_id=#{store_id} and <![CDATA[uboard_id < #{uboard_id}]]>
+		and (uboard_con like CONCAT('%',#{keyword},'%') or uboard_title like
+		CONCAT('%',#{keyword},'%'))
+
+	</select>
+
+
+
+	<!-- 댓글 -->
+	<select id="getUserBoardReplyListI"
+		resultType="UserBoardReplyVO">
+
+		select * from
+		userreply where uboard_id = #{uboard_id} order
+		by uboard_reply_id asc
+
+	</select>
+
+	<insert id="UserBoardReplyInsertI"
+		parameterType="UserBoardReplyVO" useGeneratedKeys="true"
+		keyProperty="uboard_reply_id">
+
+		insert into userreply(
+		uboard_reply_con,uboard_id,reply_writer_id,store_id )
+		values(
+		#{uboard_reply_con},#{uboard_id},#{reply_writer_id},#{store_id} )
+
+	</insert>
+
+	<delete id="UserBoardReplyDeleteI" parameterType="int">
+
+		delete from
+		userreply where uboard_reply_id=#{uboard_reply_id}
+
+	</delete>
+
+	<update id="UserBoardReplyModifyI"
+		parameterType="UserBoardReplyVO">
+
+		update userreply
+		set uboard_reply_con
+		=
+		#{uboard_reply_con}
+		where uboard_reply_id = #{uboard_reply_id}
+
+	</update>
+
+</mapper>

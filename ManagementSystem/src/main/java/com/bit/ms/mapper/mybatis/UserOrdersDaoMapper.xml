@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.bit.ms.dao.UserDaoInterface">	
+	
+	<!-- 음식 종류에 맞는 모든 음식 가져오기 -->
+	<select id="getFoodInfo" parameterType="map" resultType="FoodVO">
+		select * from food
+		where food_type=#{param1} and store_id=#{param2}
+	</select>
+	
+	<insert id="insertOrders" parameterType="userOrdersVO">
+		insert into orders (food_type, food_name, food_id, food_cnt, user_id, store_id)
+		values (#{food_type}, #{food_name}, #{food_id}, #{food_cnt}, #{user_id}, #{store_id})
+	</insert>
+	
+	<update id="updateStock" parameterType="map">
+		update food set food_stock=food_stock-#{param1}
+		where food_id=#{param2} and store_id=#{param3}
+	</update>
+	
+</mapper>

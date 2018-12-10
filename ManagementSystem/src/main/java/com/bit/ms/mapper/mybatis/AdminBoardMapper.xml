@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace 인터페이스에 있는 패키지명 + 인터페이스명 -->
+<mapper namespace="com.bit.ms.dao.AdminDaoInterface">
+
+<!-- CEO Board 게시글 List -->
+<select id="contentList" parameterType="map" resultType="AdminBoardVO">
+	select * from ceoboard where (cboard_con like CONCAT('%',#{param2},'%') or cboard_title like
+		CONCAT('%',#{param2},'%')) order by cboard_id desc limit #{param1}, 10;
+</select>
+
+<!-- CEO Board 작성 게시글 등록 -->
+<insert id="CEOWriteReg" parameterType="AdminBoardVO" useGeneratedKeys="true" keyProperty="cboard_id">
+	insert into ceoboard (cboard_title, cboard_con, writer_cid) values (#{cboard_title}, #{cboard_con}, #{writer_cid}) 
+</insert>
+
+<!-- CEO Board 게시글 읽기 -->
+<select id="contentView" parameterType="int" resultType="AdminBoardVO">
+	select * from ceoboard where cboard_id = #{cboard_id}
+</select>
+
+<!-- CEO Board 게시글 삭제 -->
+<delete id="contentDel" parameterType="int">
+	delete from ceoboard where cboard_id = #{cboard_id}
+</delete>
+
+<!-- CEO Board 게시글 수정 -->
+<update id="contentModi" parameterType="AdminBoardVO">
+	update ceoboard set cboard_title = #{cboard_title}, cboard_con = #{cboard_con} where cboard_id = #{cboard_id}
+</update>
+
+<!-- CEO Board 게시글 페이징-->
+<select id="CEOBOardTotalCount" resultType="int">
+	select count(*) from ceoboard where (cboard_con like CONCAT('%',#{keyword},'%') or cboard_title like CONCAT('%',#{keyword},'%'))
+</select>
+
+<!-- CEO Board View 내 페이징(이전 / 다음) -->
+<select id="getPreviousPage" resultType="int">
+	select ifnull(max(cboard_id),-1) from ceoboard where <![CDATA[cboard_id < #{cboard_id}]]>
+	and (cboard_con like CONCAT('%',#{keyword},'%') or cboard_title like CONCAT('%',#{keyword},'%'))
+</select>
+<select id="getNextPage" resultType="int">
+select ifnull(min(cboard_id),-1) from ceoboard where cboard_id > #{cboard_id}
+	and (cboard_con like CONCAT('%',#{keyword},'%') or cboard_title like CONCAT('%',#{keyword},'%'))
+</select>
+
+<!-- CEO Board 댓글 리스트 -->
+<select id="getReplyList" resultType="AdminBoardReplyVO">
+	select * from cboard_reply where cboard_id = #{cboard_id}
+	order by cboard_reply_id asc
+</select>
+
+<!-- CEO Board 댓글 남기기 -->
+<insert id="CEOBoardReplyInsert" parameterType="AdminBoardReplyVO" useGeneratedKeys="true" keyProperty="cboard_reply_id">
+	insert into cboard_reply (cboard_reply_con, cboard_reply_writer, cboard_id) values (#{cboard_reply_con}, #{cboard_reply_writer}, #{cboard_id})
+</insert>
+
+
+<!-- CEO Board 댓글 삭제 -->
+<delete id="CEOBoardReplyDelete" parameterType="int">
+	delete from cboard_reply where cboard_reply_id = #{cboard_reply_id}
+</delete>
+
+<!-- CEO Board 댓글 수정 -->
+<update id="CEOBoardReplyModify" parameterType="AdminBoardReplyVO">
+	update cboard_reply set cboard_reply_con = #{cboard_reply_con} where cboard_reply_id = #{cboard_reply_id}
+</update>
+
+</mapper>

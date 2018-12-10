@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.ms.dao.AdminDaoInterface">
+
+	<!-- 공지사항 게시글 -->
+	<insert id="insertNotice" parameterType="noticeVO">
+		insert into noticeboard(notice_title, notice_con, admin_id, store_id) 
+		values (#{notice_title}, #{notice_con}, #{admin_id}, #{store_id})
+	</insert>
+
+	<select id="pageCount" resultType="int">
+		select count(*) from noticeboard;
+	</select>
+
+	<select id="selectList" parameterType="map" resultType="noticeVO">
+		select * from noticeboard order by notice_id desc limit #{firstRow}, 10
+	</select>
+	
+	<select id="selectView" resultType="noticeVO">
+		select * from noticeboard where notice_id=#{notice_id}
+	</select>
+	
+	<delete id="deleteNotice" parameterType="int">
+		delete from noticeboard where notice_id=#{notice_id}
+	</delete>
+	
+	<update id="updateNotice" parameterType="noticeVO">
+		update noticeboard set notice_title=#{notice_title}, notice_con=#{notice_con} 
+		where notice_id=#{notice_id};
+	</update>
+	
+	<!-- 공지사항 댓글 -->
+	<select id="replyList" resultType="replyVO">
+		select * from noticereply
+		where notice_id = #{notice_id}
+		order by reply_id
+	</select>
+
+	<insert id="insertReply" parameterType="replyVO">
+		insert into noticereply(notice_id, admin_id, reply_con, store_id)
+		values (#{notice_id}, #{admin_id}, #{reply_con}, #{store_id})
+	</insert>
+
+	<update id="updateReply" parameterType="replyVO">
+		update noticereply set reply_con =#{reply_con}
+		where reply_id = #{reply_id};
+	</update>
+
+	<delete id="deleteReply" parameterType="int">
+		delete from noticereply
+		where reply_id = #{reply_id}
+	</delete>
+</mapper>

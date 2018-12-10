@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bit.ms.dao.AdminDaoInterface">
+	
+	<!-- 사용자 시간 업데이트 -->
+	<update id="updateAddTime" parameterType="map">
+		update userinfo set
+		user_time=(user_time+#{param1})
+		where user_id=#{param2} and store_id=#{param3}
+	</update>
+
+	<!-- 사용 시간 종료 또는 강제 종료된 좌석의 사용자 지우기 -->
+	<update id="deleteSeat" parameterType="map">
+		update seat set
+		user_id=null
+		where user_id=#{param1} and
+		store_id=#{param2}
+	</update>
+
+	<!-- 선택된 좌석의 사용자 정보 가져오기 -->
+	<select id="getUserInfo" parameterType="map" resultType="userVO">
+		select *
+		from userinfo
+		where user_id=#{param1} and store_id=#{param2}
+	</select>
+	
+	<!-- 선택된 좌석의 주문 정보 가져오기 -->
+	<select id="getOrdersInfo" parameterType="map" resultType="userOrdersVO">
+		select *
+		from orders
+		where user_id=#{param1} and store_id=#{param2}
+	</select>
+
+	<!-- 등록된 좌석 모두 가져오기 -->
+	<select id="getSeatListAll" resultType="seatVO">
+		select * from seat
+		where
+		store_id=#{store_id}
+	</select>
+
+</mapper>

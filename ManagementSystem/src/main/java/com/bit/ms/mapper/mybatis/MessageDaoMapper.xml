@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace - 인터페이스에 있는 패키지 명 + 인터페이스 명 -->
+<mapper namespace="com.bit.ms.dao.MemberDaoInterface">
+
+	<select id="adminStoreList" resultType="storeVo">
+		select * from store where admin_id = #{admin_id}
+	</select>
+<!-- 메시지 리스트 불러오기 -->
+	<select id="getMessageList" parameterType="hashmap" resultType="messageVO">
+		select message_id, message_con, DATE_FORMAT(message_date,'%Y-%m-%d %h:%i:%S %p') message_date, send_id, receive_id, message_read, store_id
+	    from message where receive_id = #{receive_id} and store_id = (select store_id from store where store_name = #{store_name}) order by message_read asc
+	</select>
+	<!-- 사용자의 메시지리스트 불러오기 -->
+	<select id="userMessageList" resultType="messageVO">
+		select message_id, message_con, DATE_FORMAT(message_date,'%Y-%m-%d %h:%i:%S %p') message_date, send_id, receive_id, message_read, store_id
+		from message where receive_id = #{receive_id} order by message_read asc
+	</select>
+	<!-- 메시지 쓰기 -->
+	<insert id="writeMessage" parameterType="messageVo">
+		insert into message (message_con, send_id, receive_id, store_id) 
+		values (#{message_con}, #{send_id}, #{receive_id}, #{store_id})
+	</insert>
+	<!--메시지 삭제  -->	
+	<delete id="deleteMessage">
+		delete from message where message_id = #{message_id}
+	</delete>
+	<!-- 읽은 메시지 수정 -->	
+	<update id="readMessage" parameterType="hashmap">
+		update message set message_read = #{message_read} where message_id = #{message_id}
+	</update>
+	<!-- 안읽은 메시지 카운트(관리자) -->	
+	<select id="messageCnt" parameterType="hashmap" resultType="int">
+		select count(*) from message where receive_id = #{receive_id}  and store_id = #{store_id} and message_read = "N"
+	</select>
+	<!-- 안읽은 메시지 카운트(사용자) -->	
+	<select id="userMessageCnt"  resultType="int">
+		select count(*) from message where receive_id = #{receive_id} and message_read = "N"
+	</select>
+	<!--사용자의 매장리스트 -->
+	<!-- <select id = "getStoreList" resultType = "storeVO">
+		select store_name, b.store_id from userinfo a, store b where a.user_id = #{send_id} and a.store_id = b.store_id
+	</select> -->
+	<!-- 중복사용자 제거리스트 -->
+	<select id="userListDistinct" resultType = "userVo">
+		select distinct user_id from userinfo
+	</select>
+	<select id="getMessageDetail"  resultType="messageVo">
+		select * from message where message_id = #{message_id}
+	</select>
+</mapper>

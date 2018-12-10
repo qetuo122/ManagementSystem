@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.bit.ms.dao.AdminDaoInterface">	
+	
+	<!-- 음식 추가(사진은 업데이트를 통해 저장) -->
+	<insert id="insertFood" parameterType="FoodVO">
+		insert into food (food_type, food_name, food_photo, food_price, food_stock, store_id)
+		values (#{food_type}, #{food_name}, #{food_photo}, #{food_price}, #{food_stock}, #{store_id})
+	</insert>
+	
+	<!-- 음식 정보 수정 -->
+	<update id="updateFood" parameterType="FoodVO">
+		update food set food_name=#{food_name}, food_price=#{food_price}, food_stock=#{food_stock}
+		where food_id=#{food_id} and store_id=#{store_id}
+	</update>
+	
+	<!-- 음식 삭제 -->
+	<delete id="deleteFood" parameterType="map">
+		delete from food
+		where food_id=#{param1} and store_id=#{param2}
+	</delete>
+	
+	<!-- 모든 음식 정보 가져오기 -->
+	<select id="getFoodInfoAll" resultType="FoodVO">
+		select * from food
+		where store_id=#{store_id}
+	</select>
+	
+	<!-- 주문 목록 삭제 -->
+	<delete id="processOrders" parameterType="map">
+		delete from orders
+		where orders_id=#{param1} and store_id=#{param2}
+	</delete>
+	
+</mapper>

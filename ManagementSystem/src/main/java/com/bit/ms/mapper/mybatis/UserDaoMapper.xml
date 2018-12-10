@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace - 인터페이스에 있는 패키지 명 + 인터페이스 명 -->
+<mapper namespace="com.bit.ms.dao.UserDaoInterface">
+	<!-- 소셜아이디를 구분시켜 회원가입 -->
+	<insert id="regUser" parameterType="userVO">
+		insert into userinfo (user_id, user_pw, user_name, user_phone, user_birth, user_email, ${divide})
+		values (#{user_id}, #{user_pw}, #{user_name}, #{user_phone}, #{user_birth}, #{user_email}, #{whatid})
+	</insert>
+	<!-- 회원 인증키(난수) 생성 -->
+	<update id="GetKey" parameterType="Map">
+		update userinfo set user_key = #{param2} where user_id = #{param1}
+	</update>
+	<!-- 회원 인증키(난수) Y로 변경 -->
+	<update id="alter_userKey" parameterType="Map">
+		update userinfo set user_key = 'Y' where user_id = #{param1} and user_key = #{param2}
+	</update>
+	<!-- 회원 임시 비밀번호-->
+	<update id="searchPassword" parameterType="Map">
+		update userinfo set user_pw = #{param3} where user_id = #{param1} and user_email = #{param2}
+	</update>
+	<!-- 로그인 / 아이디와 스토어id로 찾음 -->
+	<select id="loginUser" resultType="userVO">
+		select * from userinfo where user_id = #{user_id}
+	</select>
+	<!-- 유저 로그인시 store_id 저장 -->
+	<update id="update_store_id_S" parameterType="Map">
+		update userinfo set store_id = #{param2} where user_id = #{param1}
+	</update>
+	<!-- 정보 얻기 -->
+	<select id="userInfo" resultType="UserVO">
+		select * from userinfo where user_id = #{user_id}
+	</select>	
+	<!-- 아이디 찾기 -->
+	<select id="searchId" resultType="String">
+		select ifnull(user_id, 0) from userinfo where user_name = #{user_name} and user_phone = #{user_phone} and user_key = 'Y'
+	</select>
+	<!-- 비밀번호 찾기 -->
+	<select id="searchPw" parameterType="userVO" resultType="userVO">
+		select *
+		from user where userid = #{userId}
+	</select>
+	<!-- 내 정보 얻어오기 -->
+	<select id="getMyPage" resultType="userVO">
+		select * from userinfo where
+		user_id = #{user_id}
+	</select>
+	<!-- 내 이름 수정 -->
+	<update id="editUserName" parameterType="hashmap">
+		update userinfo set user_name = #{user_name} where user_id = #{user_id}
+	</update>
+	<!-- 내 비밀번호 수정 -->
+	<update id="editUserPw" parameterType="hashmap">
+		update userinfo set user_pw = #{user_pw} where user_id = #{user_id}
+	</update>
+	<!-- 내 폰번호 수정 -->
+	<update id="editUserPhone" parameterType="hashmap">
+		update userinfo set user_phone = #{user_phone} where user_id = #{user_id}
+	</update>
+	<!-- 내 생년월일 수정 -->
+	<update id="editUserBirth" parameterType="hashmap">
+		update userinfo set user_birth = #{user_birth} where user_id = #{user_id}
+	</update>
+	<!-- 내 이메일 수정 -->
+	<update id="editUserEmail" parameterType="hashmap">
+		update userinfo set user_email = #{user_email} where user_id = #{user_id}
+	</update>
+	<!-- 유저 삭제 -->
+	<delete id="deleteUser">
+		delete from userinfo where user_id = #{user_id}
+	</delete>
+	<!-- 아이디 중복 검사 -->
+	<select id="checkOverId" parameterType="String" resultType="int">
+		select count(*) from userinfo where user_id = #{user_id}
+	</select>
+	<!-- 이메일 중복 검사 -->
+	<select id="checkOverEmail" parameterType="String" resultType="int">
+		select count(*) from userinfo where user_email = #{user_email}
+	</select>
+	<!-- 전화번호 중복 검사 -->
+	<select id="checkOverPhoneNum" resultType="String">
+		select userphone from
+		user where userphone = #{userPhone}
+	</select>
+	<!-- 스토어 정보 가져오기 -->
+	<select id="getUserStoreVO" parameterType="int"
+		resultType="storeVO">
+		select * from store where store_id = #{store_id}
+	</select>
+	<!-- 사용자 시간 가져오기 -->
+	<select id="getUserTimeI" resultType="Long">
+		select user_time from userinfo where user_id = #{user_id}
+	</select>
+	<!-- 선택한 자리에 사용자가 있나 불러오기 -->
+	<select id="getUserIdI" resultType="String">
+		select user_id from seat where seat_id = #{seat_id}
+	</select>
+	<!-- 매장에 접속한 모든 사용자 불러오기 -->
+	<select id="getUserListI" resultType="String">
+		select user_id from seat where store_id = #{store_id}
+	</select>
+	<!-- 소셜로그인 아이디로 가입여부 확인 -->
+	<select id="getSocialId" resultType="int">
+		select count(*) from userinfo where ${divide} = #{id}
+	</select>
+	<!-- 로그인한 소셜 아이디를 통해 유저정보 검색 -->
+	<select id="getSocialIdToInfo" resultType="userVO">
+		select * from userinfo where ${divide} = #{id}
+	</select>
+	<!-- 모든 매장 가지고옴 -->
+	<select id="getStoreAllList" resultType="StoreVO">
+		select * from store
+	</select>
+</mapper>

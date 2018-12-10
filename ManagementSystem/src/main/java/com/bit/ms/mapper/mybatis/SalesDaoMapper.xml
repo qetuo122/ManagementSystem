@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.bit.ms.dao.AdminDaoInterface">
+ 
+ 	<select id="listAll" resultType="salesVO">
+ 		select sales_id, DATE_FORMAT(sales_day,'%Y-%m-%d %h:%i:%S %p') salesTime, DATE_FORMAT(sales_day,'%m') salesMonth, DATE_FORMAT(sales_day,'%Y%m%d') salesDate, DATE_FORMAT(sales_day,'%d') sales_day, sales_total, sales_food, sales_seat, store_id from sales;
+ 	</select>
+ 	
+ 	<select id="listSales" resultType="salesVO">
+ 		select sales_id, DATE_FORMAT(sales_day,'%Y-%m-%d %h:%i:%S %p') salesTime, DATE_FORMAT(sales_day,'%m') salesMonth, DATE_FORMAT(sales_day,'%Y%m%d') salesDate, DATE_FORMAT(sales_day,'%d') sales_day, sales_total, sales_food, sales_seat, store_id from sales where DATE_FORMAT(sales_day,'%d') = #{day} and store_id = #{storeId} and DATE_FORMAT(sales_day,'%m') = #{nowMonth};
+ 	</select>
+ 	
+	<!-- 내 정보 얻어오기 -->
+	<select id="getStoreId" resultType="salesVO">
+		select sales_id, DATE_FORMAT(sales_day,'%Y%m%d') salesDate, DATE_FORMAT(sales_day,'%d') sales_day, sales_total, sales_food, sales_seat, store_id from sales where DATE_FORMAT(sales_day,'%d') = #{day} and store_id = #{storeId};
+	</select>
+	
+	<select id="listAlls" resultType="salesVO">
+ 		select sales_id, DATE_FORMAT(sales_day,'%Y-%m-%d %h:%i:%S %p') salesTime, DATE_FORMAT(sales_day,'%m') salesMonth, DATE_FORMAT(sales_day,'%Y%m%d') salesDate, DATE_FORMAT(sales_day,'%d') sales_day, sales_total, sales_food, sales_seat, store_id from sales where DATE_FORMAT(sales_day,'%m') = #{nowMonth};
+ 	</select>
+ 	
+ 	<select id="chartList" resultType="salesVO">
+ 		select date_format(sales_day, '%d') sales_day, sum(sales_total) sales_total, sum(sales_food) sales_food, sum(sales_seat) sales_seat from sales where date_format(sales_day, '%m') = #{nowMonth} and store_id = #{storeId} group by date_format(sales_day, '%d');
+ 	</select>
+ 	
+ </mapper>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

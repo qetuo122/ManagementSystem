@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace - 인터페이스에 있는 패키지 명 + 인터페이스 명 -->
+<mapper namespace="com.bit.ms.dao.AdminDaoInterface">
+
+	<!-- Admin 회원가입 -->
+	<insert id="regAdmin" parameterType="AdminVO">
+		insert into admininfo(admin_id, admin_pw, admin_name, admin_phone)
+		values (#{admin_id}, #{admin_pw}, #{admin_name}, #{admin_phone})
+	</insert>
+
+	<!-- Admin 아이디 중복 검사 -->
+	<select id="checkOverId" parameterType="String" resultType="int">
+		select count(*) from admininfo 
+		where admin_id = #{admin_id}
+	</select>
+
+	<!-- Admin 로그인 -->
+	<select id="loginAdmin" resultType="adminVO">
+		select * from admininfo 
+		where admin_id = #{admin_id}
+	</select>
+
+	<!-- Admin 아이디 찾기 수정 해야 함--> 
+	<select id="search_adminId" resultType="String">
+		select ifnull(admin_id, 0) from admininfo where
+		where admin_name = #{admin_name} and admin_phone = #{admin_phone} and store_id = #{store_id}
+	</select>
+
+	<!--관리자 정보가져오기 -->
+	<select id="getAdminMyage" resultType="adminVO">
+		select * from admininfo
+		where admin_id = #{admin_id}
+	</select>
+
+	<!--관리자가 갖고있는 매장정보 가져오기 -->
+	<select id="getStore" resultType="storeVO">
+		select * from store 
+		where admin_id = #{admin_id}
+	</select>
+	
+	<!-- 매장 정보 가져오기(option값 필요) -->
+   	<select id="getStoreList" resultType="StoreVO">
+		select * from store
+   	</select>
+	
+	<!-- 매장이름을 통한 매장가져오기(매장중복검사) -->
+	<select id="getSelectStoreName" resultType="int">
+		select count(*) from store 
+		where store_name = #{store_name}
+	</select>
+	
+	<!--해당 매장에대한 상세정보 -->
+	<select id="getStoreDetail" resultType="StoreVO">
+		select store_id, store_name, DATE_FORMAT(store_regDate,'%Y-%m-%d %h:%l:%S %p') store_regDate, store_num, store_zip, store_address 
+	    from store where store_id = #{store_id}
+	</select>
+
+	<!--매장 추가 -->
+	<insert id="addStore" parameterType="StoreVO">
+		insert into store(store_name, store_zip, store_address, store_num, admin_id)
+		values (#{store_name}, #{store_zip}, #{store_address}, #{store_num}, #{admin_id})
+	</insert>
+
+	<!--매장 삭제 -->
+	<delete id="deleteStore">
+		delete from store
+		where store_id = #{store_id}
+	</delete>
+	
+	<!--관리자 이름수정하기 -->
+	<update id="editAdminName" parameterType="hashmap">
+		update admininfo 
+		set	admin_name = #{admin_name} where admin_id = #{admin_id}
+	</update>
+	<!--관리자 비밀번호하기 -->
+	<update id="editAdminPw" parameterType="hashmap">
+		update admininfo 
+		set	admin_pw = #{admin_pw} where admin_id = #{admin_id}
+	</update>
+	<!--관리자 폰번호하기 -->
+	<update id="editAdminPhone" parameterType="hashmap">
+		update admininfo 
+		set	admin_phone = #{admin_phone} where admin_id = #{admin_id}
+	</update>
+
+	<!-- 관리자 삭제하기 -->
+	<delete id="deleteAdmin">
+		delete from admininfo where admin_id = #{admin_id}
+	</delete>
+
+
+	<!-- 회원리스트 출력 -->
+	<select id="getUserList" resultType="userVO">
+		select * from userinfo
+	</select>
+	
+	<!-- 회원리스트 sorting -->
+	<select id="sortingUserList" parameterType="userListVO" resultType="userVO">
+		select * from userinfo order by ${sortName} ${orderBy}
+	</select>
+		
+	<!-- 관리자 아이디로 자신의 스토어전체 검색 -->
+	<select id="getStoreName" parameterType="String" resultType="storeVO">
+		select * from store where admin_id = #{admin_id}
+	</select>
+	
+</mapper>
