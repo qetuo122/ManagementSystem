@@ -42,4 +42,4 @@
  
 ## 상세 페이지
 
-1. <a User, admin Message
+ - [User / Admin Message](./Readme/message.md)<br>
