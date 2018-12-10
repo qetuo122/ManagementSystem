@@ -8,7 +8,7 @@
 
 관리자와 사용자간 상호 쪽지 기능
 
-
+<br>
 
 ## 구동원리
 
@@ -20,7 +20,7 @@
  - 관리자가 쪽지를 보낼 경우 사용자 리스트를 select option에 담아 선택 (전체보내기 가능)
  - Ajax를 이용하여 쪽지 보내기 및 답장 기능 구현
  
-
+<br>
  
 ## 화면
 
@@ -43,7 +43,11 @@
  
 <img width = "280px" height = "300px" src = "https://user-images.githubusercontent.com/42988982/49742048-124eed80-fcdb-11e8-957a-2ce22b79cefe.png"> <img width = "280px" height = "300px" src = "https://user-images.githubusercontent.com/42988982/49742002-ffd4b400-fcda-11e8-941a-b608059ac106.PNG"> <img width = "280px" height = "300px" src = "https://user-images.githubusercontent.com/42988982/49742050-12e78400-fcdb-11e8-9248-4a931ea77089.PNG">
 
+<br>
+
 ## 사용기술
+
+<hr>
 
  - JavaScript : Jquery, Ajax
  - Bootstrap
