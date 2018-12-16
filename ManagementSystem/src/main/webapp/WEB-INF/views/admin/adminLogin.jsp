@@ -25,7 +25,9 @@ input{
 	font-family: sans-serif;
 }
 html, body {
-	background-color: black;
+	/* background-color: black; */
+	background-image: url(<%=request.getContextPath()%>/images/ms-background.jpg);
+	background-size: cover;
 	height: 100%;
 }
 
@@ -33,14 +35,7 @@ body {
 	margin: 0;
 }
 
-.container {
-	min-height: 100%;
-	position: relative;
-}
-
 .full {
-<%-- 	background-image:
-		url("<%=request.getContextPath()%>/images/login-back.jpg"); --%>
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -54,8 +49,36 @@ body {
 	left: 0;
 	right: 0;
 	margin: auto;
-	width: 30%;
-	height: 30%;
+	width: 350px;
+	height: 40%;
+}
+
+#loginBtn, #singupBtn {
+	width: 49%;
+	margin: 0px;
+}
+
+#remember_label {
+	text-shadow: -1px 0 #000000, 0 1px #000000, 1px 0 #000000, 0 -1px #000000;
+}
+
+
+@media ( max-width : 767px ) {
+	.area_inputs {
+		width: 270px;
+	}
+	#loginBtn, #singupBtn {
+		width: 100%;
+	}
+	#loginBtn {
+		margin-bottom: 5px;
+	}
+	html, body {
+		background-position: center;
+	}
+	#spanLoginCheck {
+		font-size: 18px;
+	}
 }
 </style>
 </head>
@@ -65,21 +88,19 @@ body {
 		<c:set value="checked" var="checked"/>
 	</c:if>
 	<div class="full">
-		<div class="wow flipInY"
-			style="float: right; margin-top: 30px; margin-right: 30px;">
-			<a href="${pageContext.request.contextPath}/"> <img src="${pageContext.request.contextPath}/images/back-arrow.png" style="height: 50px;" />
+		<div style="float: right; margin-top: 10px; margin-right: 10px;">
+			<a href="${pageContext.request.contextPath}/"> 
+				<img src="${pageContext.request.contextPath}/images/back-arrow.png" style="height: 40px; visibility: hidden;" />
 			</a>
 		</div>
 		<div class="container">
 			<div class="area_inputs wow fadeIn" data-wow-delay="0.3s">
 				<div class="form-group">
-					<label class="font-weight-bold text-white" for="inputId">아이디</label>
 					<div>
 						<input type="text" class="form-control" id="inputId" name="admin_id" value="${cookie.admin_check.value}" placeholder="아이디">
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="font-weight-bold text-white" for="inputPassword">비밀번호</label>
 					<div>
 						<input type="password" class="form-control" id="inputPassword" name="admin_pw" placeholder="비밀번호">
 					</div>
@@ -88,19 +109,13 @@ body {
 					<span class="font-weight-bold text-white bg-dark" id="spanLoginCheck"></span>
 				</div>
 				<div class="form-group">
-					<label class="font-weight-bold text-white">
-					<input type="checkbox" id="remember_ad" name="remember_adminId" ${checked}>
-						아이디 기억하기
+					<label id="remember_label" class="font-weight-bold text-white">
+						<input type="checkbox" id="remember_ad" name="remember_adminId" ${checked}> 아이디 기억하기
 					</label>
-					<%-- <div class="font-weight-bold text-white">
-						<a href="${pageContext.request.contextPath}/admin/adminSearch">&nbsp; 아이디 / 비밀번호 찾기</a>
-					</div> --%>
 					<div>
-						<button id="loginBtn" type="submit" class="btn btn-danger btn-block">로그인</button>
+						<button id="loginBtn" type="submit" class="btn btn-danger btn-inline-block">로그인</button>
+						<a id="singupBtn" class="btn btn-deep-orange btn-inline-block" href="${pageContext.request.contextPath}/admin/reg">회원가입</a>
 					</div>
-				</div>
-				<div>
-					<a class="btn btn-danger btn-block" href="${pageContext.request.contextPath}/admin/reg">회원가입</a>
 				</div>
 			</div>
 		</div>

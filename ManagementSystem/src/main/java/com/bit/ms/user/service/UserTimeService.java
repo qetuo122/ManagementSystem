@@ -27,9 +27,9 @@ public class UserTimeService {
 	}
 
 	// 사용 시간 업데이트
-	public int updateSaveTime(long useTime, String userId, int storeId) {
+	public int updateSaveTime(String userId, int storeId) {
 		userDao = sqlSessionTemplate.getMapper(UserDaoInterface.class);
-		return userDao.updateSaveTime(useTime, userId, storeId);
+		return userDao.updateSaveTime(userId, storeId);
 	}
 
 	// 좌석에 사용 중인 사용자 추가

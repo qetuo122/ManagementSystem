@@ -36,14 +36,13 @@ body {
 
 .container {
 	min-height: 100%;
-	width: 28.9%;
+	width: 350px;
 }
 
 .titleStyle {
 	padding: 30px;
 	margin-top: 10px;
 	margin-bottom: 10px;
-	/* color: #2E64FE; */
 	color: black;
 }
 
@@ -60,7 +59,6 @@ body {
 </style>
 </head>
 <body>
-
 	<div class="container">
 		<div class="titleStyle">
 			<h1>MS :p</h1>
@@ -100,13 +98,12 @@ body {
 				<div class="check_font" id="phone_check"></div>
 			</div>
 			<div class="reg_button">
-				<a class="btn btn-danger px-3" href="${pageContext.request.contextPath}/admin">
-					<i class="fa fa-rotate-right pr-2" aria-hidden="true"></i>취소하기
-				</a>
-				&emsp;&emsp;
 				<button type="submit" class="btn btn-primary px-3" id="reg_submit">
 					<i class="fa fa-heart pr-2" aria-hidden="true"></i>가입하기
 				</button>
+				<a class="btn btn-danger px-3" href="${pageContext.request.contextPath}/admin">
+					<i class="fa fa-rotate-right pr-2" aria-hidden="true"></i>취소하기
+				</a>
 			</div>
 		</form>
 	</div>

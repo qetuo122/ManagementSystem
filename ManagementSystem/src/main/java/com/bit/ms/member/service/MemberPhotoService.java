@@ -43,8 +43,8 @@ public class MemberPhotoService {
 
 		if (photoTotalCount > 0) {
 			
-			firstRow = (pageNumber - 1) * NOTICE_COUNT_PER_PAGE + 1;
-			photoList = memberDao.selectList(store_id, firstRow - 1); // mysql은 0열부터 시작 -1을 해줌
+			firstRow = (pageNumber - 1) * NOTICE_COUNT_PER_PAGE;
+			photoList = memberDao.selectList(store_id, firstRow); // mysql은 0열부터 시작 -1을 해줌
 		
 		} else {
 			currentPageNum = 0;

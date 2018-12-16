@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
 	pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,7 +29,13 @@
 		<p>회원가입이 정상적으로 이루어 졌습니다.</p>
 		<br>
 		<p>로그인 하시면 홈페이지 내의 모든 서비스를 이용하실 수 있습니다.</p>
-		<br> <a href="${pageContext.request.contextPath}/">로그인 페이지로 이동하기</a>
+		<br> 
+		<c:if test="${empty param.store_id }">
+			<a href="${pageContext.request.contextPath}/">로그인 페이지로 이동하기</a>
+		</c:if>
+		<c:if test="${!empty param.store_id }">
+			<a href="${pageContext.request.contextPath}/user/qrLogin?store_id=${param.store_id}&seat_id=${param.seat_id}">로그인 페이지로 이동하기</a>
+		</c:if>
 	</div>
 
 </body>

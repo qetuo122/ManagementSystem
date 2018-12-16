@@ -36,7 +36,7 @@ public class KakaoController {
 		System.out.println("kakao code : " + code);
 
 		// JsonNode트리형태로 토큰받아온다
-		JsonNode jsonToken = KakaoAccessToken.getAccessToken(code);
+		JsonNode jsonToken = KakaoAccessToken.getKakaoAccessToken(code);
 		// 여러 json객체 중 access_token을 가져온다
 		accessToken = jsonToken.get("access_token");
 

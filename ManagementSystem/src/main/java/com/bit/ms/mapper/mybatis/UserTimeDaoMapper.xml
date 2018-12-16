@@ -11,8 +11,8 @@
 	
 	<!-- 사용 시간 업데이트 -->
 	<update id="updateSaveTime" parameterType="map">
-		update userinfo set user_time=(user_time-#{param1})
-		where user_id=#{param2} and store_id=#{param3}
+		update userinfo set user_time=(user_time-1)
+		where user_id=#{param1} and store_id=#{param2}
 	</update>
 
 	<!-- 좌석에 사용 중인 사용자 추가 -->

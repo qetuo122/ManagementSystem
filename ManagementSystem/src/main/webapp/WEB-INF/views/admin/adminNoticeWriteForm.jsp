@@ -14,7 +14,7 @@
 			<input type="hidden" name="admin_id" value="${adminSession.admin_id}"/>
 			<input type="hidden" name="store_id" value="${storeSelectSession.store_id}"/>
 			<input type="text" class="form-control" placeholder="제목" name="notice_title">
-			<textarea class="form-control" rows="20" placeholder="내용" name="notice_con"></textarea>
+			<textarea class="form-control" rows="16" placeholder="내용" name="notice_con"></textarea>
 			<button type="submit" class="btn btn-info btn-block">작성하기</button>
 		</form>
 	</div>

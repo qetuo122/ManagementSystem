@@ -13,7 +13,6 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 <style>
 html, body {
-	background-color: black;
 	height: 100%;
 }
 
@@ -23,9 +22,8 @@ body {
 
 .container {
 	min-height: 100%;
-	position: relative;
+	width: 350px;
 }
-
 .full {
 <%-- 	background-image:
 		url("<%=request.getContextPath()%>/images/login-back.jpg"); --%>
@@ -42,7 +40,7 @@ body {
 	left: 0;
 	right: 0;
 	margin: auto;
-	width: 30%;
+	width: 350px;
 	height: 30%;
 }
 
@@ -53,6 +51,11 @@ body {
 </head>
 <body>
 	<div class="full">
+		<div style="float: right; margin-top: 6px; margin-right: 10px;">
+			<a href="${pageContext.request.contextPath}/admin"> 
+				<img src="${pageContext.request.contextPath}/images/close.png" style="height: 20px;" />
+			</a>
+		</div>
 		<div class="container">
 			<div class="area_inputs">
 				<div class="input-group">

@@ -21,11 +21,11 @@
 	position : absolute;
 	top : 5%;
 	left : 50%;
-	width : 700px;
+	width : 80%;
 	background-color : white;
 	text-align : center;
 	border-radius: 10px;
-	margin-left : -350px;
+	margin-left : -40%;
 	height : 83%;
 	overflow : overlay;
 }
@@ -42,8 +42,13 @@
 	font-size : 15px;
 }
 .post {
-	padding: 0 1.5%;
+	width: 50%;
+	max-width: 500px;
+	margin: 30px auto;
+	background-color : white;
+	border-radius : 10px;
 	height : 80%;
+	padding: 0 1.5%;
 }
 .comment-form .form-control {
 	border: 0px;
@@ -57,7 +62,7 @@
 	padding: 0 1.5%
 }
 .form-group {
-	margin-bottom: 35px !important;
+	margin-bottom: 15px !important;
 }
 .messageTitle {
 	margin-top: 10%;
@@ -73,30 +78,7 @@ hr{
 	font-weight : bold;
 	font-size : 20px;
 }
-@media ( min-width :992px) {
-	.post {
-		width: 50%;
-		max-width: 500px;
-		margin: 0 auto;
-		background-color : white;
-		border-radius : 10px;
-		height : 80%;
-	}
-	.comment-form label {
-		position: absolute;
-		width: 200px;
-	}
-	.comment-form .name, .comment-form .email, .comment-form .message {
-		top: -27px;
-		font-weight: bold;
-	}
-}
-@media ( min-width :1200px) {
-	.post {
-		max-width: 525px;
-		height : 80%;
-	}
-}
+
 #submit {
 	font-size : 15px;
 }
@@ -114,7 +96,7 @@ hr{
 	height: 250px;
 	border-right : 3px solid #8e8e8e;
 	border-bottom : 3px solid #8e8e8e;
-	margin-left: 65px;
+	margin-left: 20px;
 	list-style: none;
 	margin-bottom: 30px;
 	border-radius: 10px;
@@ -180,8 +162,8 @@ hr{
 	background-image : url("${pageContext.request.contextPath}/images/message1.png");
 	background-size : 100%;
 	float : right;
-	width : 70px;
-	height : 55px;
+	width : 50px;
+	height : 40px;
 	border-radius: 10px;
 }
 .messageIconWrap:hover{
@@ -192,13 +174,11 @@ hr{
 .messageBtn:hover{
 	background-image : url('${pageContext.request.contextPath}/images/openMessage.png');
 }
-#message_con{
-	height : 
-}
+
 </style>
 </head>
 <body>
-<span class = "messageIconWrap" style = "position : absolute; top : 90%; left : 3%">
+<span class = "messageIconWrap" style = "position : fixed; bottom : 20px; margin-left : 2%;">
 	<span id = "messageBtn" class = "messageBtn"></span>
 	<span id = "readCnt" class = "readCnt"></span>
 </span>
@@ -241,7 +221,7 @@ hr{
 						</div>
 						<div class="col-md-12 form-group">
 							<input type="button" class="btn btn-block btn-lg btn-success"
-								value="메시지 남기기" id = "sendBtn">
+								value="메시지 남기기" id = "sendBtn" >
 							<input type="button" class="btn btn-block btn-lg btn-success"
 								value="메시지 남기기" id = "replyBtn" style = "display : none">	
 						</div>
@@ -259,15 +239,7 @@ $(document).ready(function(){
 		alarm();
 	}, 1000);
 });
-/* 스크롤따라 움직이는 Div */
-var currentPosition = parseInt($('.messageIconWrap').css('top'));
 
-$(window).scroll(function() {
-	var position = $(window).scrollTop();
-	$('.messageIconWrap').stop().animate({
-		'top' : position + currentPosition + 'px'
-	}, 1000);
-});
 /////////////// 안읽은메시지 알림 //////////////
 function alarm(){
 	$.ajax({
@@ -321,28 +293,6 @@ function getMessageList(){
 		}
 	});
 }
-/////////// 보내기메서드 /////////////
-function sendMessage(){
-	if($('#message_con').val() == ""){
-		alert("메시지 내용을 입력하세요");
-	} else {
-		$.ajax({
-			url : '${pageContext.request.contextPath}' + '/member/writeMessage/',
-			data : {
-				store_id : store_id,
-				send_id : $('#send_id').val(),
-				receive_id : $('#receive_id').val(),
-				message_con : $('#message_con').val()
-			},
-			success : function(data){
-				alert("메시지를 보냈습니다.");
-				$('#writeMessageModal').hide();
-				$('#replyBtn').css("display","none");
-				$('#message_con').val("");
-			}
-		});
-	}
-}
 //////////// 삭제버튼메서드 //////////
 function deleteMessage(message_id){
 	$.ajax({
@@ -377,6 +327,30 @@ $('#writeMessage').click(function(){
 	$('#sendBtn').click(function(){
 		sendMessage();
 	});
+
+/////////// 보내기메서드 /////////////
+	function sendMessage(){
+		if($('#message_con').val() == ""){
+			alert("메시지 내용을 입력하세요");
+		} else {
+			$.ajax({
+				url : '${pageContext.request.contextPath}' + '/member/writeMessage/',
+				data : {
+					store_id : store_id,
+					send_id : $('#send_id').val(),
+					receive_id : $('#receive_id').val(),
+					message_con : $('#message_con').val()
+				},
+				success : function(data){
+					console.log(data);
+					alert("메시지를 보냈습니다.");
+					$('#writeMessageModal').hide();
+					$('#replyBtn').css("display","none");
+					$('#message_con').val("");
+				}
+			});
+		}
+	}
 	
 /////////////// x 버튼 클릭하면 창 닫음 //////////////
 $('#messageWriteClose').click(function(){

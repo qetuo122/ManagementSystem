@@ -42,27 +42,12 @@ html, body {
 	width: 35%;
 }
 
+.menu_display {
+	height: 100%;
+}
 .right_area {
 	float: right;
 	width: 63%;
-}
-
-/* 웹에 접근한 기기가 screen일 때 가로 길이가 1170px 미만(max-width:100px) 일 때 */
-@media screen and (max-width:1170px) {
-	.left_area {
-		width: 100%;
-	}
-	.right_area {
-		width: 100%;
-	}
-}
-
-/* 웹에 접근한 기기가 screen일 때 세로 길이가 700px 미만일 때 */
-@media screen and (max-height:700px) {
-	.left_area {
-		border-top-right-radius: 0;
-		border-bottom-right-radius: 0;
-	}
 }
 
 /* 선택한 메뉴를 보여주는 테이블을 감싸고 있는 div */
@@ -143,24 +128,6 @@ html, body {
 	width: 50%;
 	float: right;
 	text-align: right;
-}
-
-/* 웹에 접근한 기기가 screen일 때 가로 길이가 1170px 이상 1480px 미만일 때 */
-@media screen and (max-width:1480px) and (min-width:1170px) {
-	.total_price_wrap {
-		width: 100%;
-	}
-	.order_btn_wrap {
-		width: 100%;
-		text-align: center;
-	}
-	.total_cancel_btn, .pay_btn {
-		width: 110px;
-	}
-	.left_area {
-		border-top-right-radius: 0;
-		border-bottom-right-radius: 0;
-	}
 }
 
 .cancel_btn:hover {
@@ -273,23 +240,52 @@ html, body {
   background-color: #717171;
 }
 
-/* Fading animation */
-/* .fading {
-  -webkit-animation-name: fading;
-  -webkit-animation-duration: 1.5s;
-  animation-name: fading;
-  animation-duration: 1.5s;
+/* 모바일 최적화 */
+@media ( max-width : 767px ) {
+	.left_area {
+		width: 100%;
+	}
+	
+	.right_area {
+		width: 100%;
+	}
+	
+	.title_text {
+		font-size: 30px;
+	}
+	.total_price_wrap {
+		font-size: 20px;
+	}
+	
+	.total_cancel_btn, .pay_btn {
+		font-size: 18px;
+		height: 70px;
+	}
+	.menu_nav ul li, .menu_nav ul li a {
+		width: 50px;
+	}
+	
+	.orderMain_container div {
+		display: inline-block;
+	}
+	
+	tr>td{
+		width: 80px;
+	}
+	
+	.order_table td {
+		font-size: 15px;
+	}
+	/* 수량 더하기빼기 버튼 */
+	.order_table td button {
+		width: 18px;
+	}
+	/* 헤더 글씨 */
+	.navbar-nav li {
+   		margin-left: 10px;
+   		font-size: 1.3em;
+	}
 }
-
-@-webkit-keyframes fading {
-  from {opacity: .4} 
-  to {opacity: 1}
-}
-
-@keyframes fading {
-  from {opacity: .4} 
-  to {opacity: 1}
-} */
 
 </style>
 </head>
@@ -300,7 +296,6 @@ html, body {
 		<div class="left_area">
 			<div style="height: 15%">
 				<div style="font-size: 35px">주문 내역</div>
-				<hr>
 			</div>
 			<div style="height: 65%; margin-bottom: 5%" class="order_table_wrap">
 				<table border="1" class="order_table">
@@ -331,9 +326,8 @@ html, body {
 		<div class="right_area">
 			<div style="height: 15%">
 				<div style="font-size: 35px">음식 리스트</div>
-				<hr>
 			</div>
-			<div style="height: 10%" class="menu_nav">
+			<div class="menu_nav">
 				<ul>
 					<li><a class="menu_link selected" id="korean">한식</a></li>
 					<li><a class="menu_link" id="japan">일식</a></li>
@@ -453,7 +447,7 @@ html, body {
 		}
 		for(var i=0; i<pLength; i++){
 			
-			str += '<div style="height: 100%" class="menu_display fading">';
+			str += '<div class="menu_display fading">';
 			for(var j=first; j<(data.length-last); j++){
 				str += createTable(data[j].food_id, data[j].food_type, data[j].food_photo, data[j].food_name, data[j].food_price);
 			}

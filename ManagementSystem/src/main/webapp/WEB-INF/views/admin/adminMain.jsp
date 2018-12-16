@@ -16,24 +16,20 @@
 .adminMain_container {
 	padding: 20px;
 }
-
 .title_text {
 	font-size: 40px;
 	font-weight: bold;
 	text-align: center;
 }
-
 .left_area {
 	width: 30%;
 	float: left;
 }
-
 .right_area {
 	width: 70%;
 	float: right;
 	padding-bottom: 20px;
 }
-
 /* 사용자 정보 표시 */
 .left_content {
 	position: absolute;
@@ -47,7 +43,6 @@
 	margin-left: 2%;
 	margin-top: -2%;
 }
-
 .left_content_title {
 	position: relative;
 	top: -20%;
@@ -62,38 +57,11 @@
 	height: 45%;
 	margin: 0 auto;
 }
-
 .com_cnt_text {
 	font-size: 40px;
 	margin-bottom: -15px;
 	margin-top: -15px
 }
-
-/* 웹에 접근한 기기가 screen일 때 세로 길이가 700px 미만일 때 */
-@media screen and (max-height:700px) {
-	.left_content {
-		overflow-y: scroll; /* 애초부터 auto 설정해주면 타이틀 보이지 않으므로 */
-		height: 60%;
-	}
-	
-	.left_content_title {
-		padding-top: 15px;
-		height: 55px;
-	}
-}
-
-/* 웹에 접근한 기기가 screen일 때 가로 길이가 1500px 미만일 때 */
-@media screen and (max-width:1500px){
-	.left_content {
-		overflow-y: scroll;
-	}
-	
-	.left_content_title {
-		padding-top: 25px;
-		height: 65px;
-	}
-}
-
 .user_info_wrap {
 	overflow: auto;
 	text-align: left;
@@ -104,7 +72,6 @@
 	margin-right: 20px;
 	margin-bottom: 7%;
 }
-
 .order_list_wrap {
 	overflow: auto;
 	text-align: left;
@@ -114,28 +81,23 @@
 	margin-left: 20px;
 	margin-right: 20px;
 }
-
 .orders_table {
 	text-align: center;
 	margin-bottom: 10px;
 	width: 100%;
 }
-
 .orders_table tbody > tr:nth-child(1) {
 	background-color: lightgray;
 }
-
 .orders_table td {
 	text-align: center;
 	font-size: 20px;
 }
-
 .seat_list {
 	width: 90%;
 	margin: 0 auto;
 	margin-left: 6%;
 }
-
 .seat_list > div {
 	float: left;
 	width: 22%;
@@ -145,19 +107,16 @@
 	margin-right: 3%;
 	margin-top: 3%;
 }
-
 .seat_list > div:hover {
 	opacity: 0.7;
 	cursor: pointer;
 }
-
 .using {
 	background-color: #0099CC;
 	color: white;
 	text-align: right;
 	padding: 10px;
 }
-
 /* 타이틀 스타일 */
 .using > div:nth-child(1) {
 	background-color: #33b5e5;
@@ -166,7 +125,6 @@
 	padding-left: 5px;
 	padding-right: 5px;
 }
-
 /* 사용 종료 버튼 스타일 */
 .using > button {
 	width: 100%;
@@ -178,23 +136,25 @@
 	color: black;
 	font-size: 25px;
 }
-
 .using > button:hover {
 	color: red;
 }
-
 .un_using {
 	line-height: 200px;
 	background-color: lightgray;
 	color: gray;
 	text-align: center;
 }
-
 .process_btn:hover {
 	cursor: pointer;
 	color: red;
 }
-
+/* 모바일 웹 최적화 */
+@media ( max-width : 767px ) {
+	.left_area {
+		display: none;
+	}
+}
 </style>
 </head>
 <body>
@@ -243,7 +203,11 @@
 </body>
 
 <script>
+	var timerArr = [];
+	
 	$(document).ready(function() {
+		getSeatList(); // 좌석 초기화
+		
 		var currentPosition = parseInt($('.left_content').css('top'));
 		
 		/* 스크롤따라 움직이는 Div */
@@ -259,61 +223,10 @@
 			var option = '<option value='+ i + '>' + i + ' 시간</option>';
 			$('#selectAddTime').append(option);
 		}
-		
-		/* 페이지 로드 시 좌석 초기화 */
-		$.ajax({
-			url: '${pageContext.request.contextPath}/admin/getSeatListAll?storeId=${storeSelectSession.store_id}', 
-			type: 'get',
-			
-			success:function(data){ 
-				var str = '';
-				var useCnt = 0; // 사용 중인 좌석 수
-				var userId = null; // 사용자 아이디
-				var userPay = 0; // 사용 금액
-				var seatId = 0; // 좌석 번호
-				var min = 0; // 남은 시간(분)
-				var sec = 0; // 남은 시간(초)
-				
-				$('#totalCnt').text(data.length); // 전체 좌석 수 표시
-				
-				for(var i=0; i<data.length; i++){
-					if(data[i].user_id != null){ // 사용 중인 좌석
-						userId = data[i].user_id;
-						seatId = data[i].seat_id;
-					
-						$.ajax({
-							url : '${pageContext.request.contextPath}/admin/getUserInfo?storeId=${storeSelectSession.store_id}&userId='+userId,
-							type : 'get',
-							async: false,
-							
-							success : function(data) {
-								min = Math.floor(data.user_time/60); // 분 계산
-								sec =  Math.floor(data.user_time%60); // 초 계산
-								userPay = data.user_pay;
-							}
-						});
-						
-						str += '<div class="using" onclick="seatChoise(this, '+ seatId +', \''+ userId +'\')">';
-						str += '<div style="height:25%"><span style="float:left; color:black">'+ seatId +'</span><span>'+ userId +'</span></div>';
-						str += '<div id='+ seatId +' style="height:25%"><span class="min">'+ min +'</span>분 <span class="sec">'+ sec +'</span>초</div>';
-						str += '<div style="height:25%">'+ userPay +'</div>';
-						str += '<button style="height:25%" onclick="deleteSeat(event, \''+ userId +'\')">사용 종료</button>';
-						str += '</div>';
-						useCnt++;
-					}
-					
-					else{ // 빈 좌석
-						str += '<div id='+ data[i].seat_id +' class="un_using">'+ data[i].seat_id +'</div>';
-					}
-				}
-				$('#useCnt').text(useCnt); // 현재 사용 중인 좌석 수 표시
-				$('#seatList').html(str); // 좌석 표시
-			} // end success
-		}); // end ajax
-		
+	
 		/* Main 충전 버튼 */
 		$('#showAddTimeModalBtn').on('click', function () {
-			var seatId = $('.selected').attr('id');
+			var seatId = $('.selected').attr('id'); // 선택된 좌석의 좌석 번호
 			
 			if(seatId == null){
 				alert('충전하실 좌석을 선택하세요.');
@@ -322,7 +235,6 @@
 			
 			$('#seatNum').text(seatId); // modal창의 좌석 번호 변경
 			$('#addTimeModal').show();
-			
 		});
 		
 		/* Modal 충전 버튼 */
@@ -359,74 +271,6 @@
 		
 	}); // end $(document).ready(function())} 
 	
-	/* 사용 중인 좌석 선택 */
-	function seatChoise(e ,seatId, userId){
-		if($(e).hasClass('selected')){ // 선택된 상태
-			$(e).css({'opacity': '', 'border': ''});
-			$(e).removeAttr('id');
-			$(e).removeClass('selected');
-			$('#selectedUserInfo').html('<span style="color:red">* 좌석을 선택하세요.</span>');
-			$('#orderListInfo').html('<span style="color:red">* 주문 대기 중인 음식이 없습니다.</span>');
-		}
-		else{ // 선택되지 않은 상태
-			$('.selected').css({'opacity': '', 'border': ''});
-			$('.selected').removeAttr('id');
-			$('.selected').removeClass('selected');
-			
-			$(e).css({'opacity': '0.5', 'border': '3px solid black'});
-			$(e).attr('id', seatId);
-			$(e).addClass('selected');
-			$('#userId').text(userId); // modal창의 숨겨진 span태그의 텍스트 변경
-			
-			// 선택된 사용자 정보 불러오기
-			$.ajax({ 
-				url:'${pageContext.request.contextPath}/admin/getUserInfo?storeId=${storeSelectSession.store_id}&userId='+userId,
-				type:'get',
-				
-				success:function(data){
-					var str = '<span style="color:black">* 이름: ' + data.user_name + '<br>';
-					str += '* 전화번호: ' + data.user_phone + '<br>';
-					str += '* 생년월일: ' + data.user_birth + '</span>';
-					$('#selectedUserInfo').html(str);
-				} // end success 
-			}); // end ajax
-			
-			// 선택된 사용자의 주문 목록 불러오기
-			$.ajax({
-				url:'${pageContext.request.contextPath}/admin/getOrdersInfo?storeId=${storeSelectSession.store_id}&userId='+userId,
-				type:'get',
-					
-				success:function(data){
-					if(data.length > 0){
-						var str = '';
-						
-						for(var i=0; i<data.length; i++){
-							var foodNameArr = data[i].food_name.split(',');
-							var foodCntArr = data[i].food_cnt.split(',');
-							
-							str += '<table border="1" class="orders_table"><tr>';
-							str += '<td>주문번호</td><td>음식</td><td>수량</td><td>상태</td></tr>';
-							str += '<tr><td rowspan=' + (foodNameArr.length) + '>' + data[i].orders_id + '</td>';
-							
-							for(var j=0; j<foodNameArr.length-1; j++){
-								str += '<td>' + foodNameArr[j] + '</td><td>' + foodCntArr[j] +'</td>';
-								if(j==0){
-									str += '<td rowspan='+ (foodNameArr.length) +' onclick="process(this, '+ data[i].orders_id +')" class="process_btn">대기</td>';
-								}
-								str += '</tr>';
-							}
-							str += '</table>';
-							
-						}
-						$('#orderListInfo').html(str);
-					}
-					else {
-						$('#orderListInfo').html('<span style="color:red">* 주문 대기 중인 음식이 없습니다.</span>');
-					}
-				} // end success 
-			});
-		}
-	}
 	
 	/* 주문 처리 하기 */
 	function process(obj, ordersId){
@@ -451,7 +295,6 @@
 	/* 사용 종료 버튼 */
 	function deleteSeat(e, userId) {
 		e.stopPropagation(); // 이벤트 버블링 중지
-		console.log(userId);
 		
 		$.ajax({
 			url:'${pageContext.request.contextPath}/admin/getOrdersInfo?storeId=${storeSelectSession.store_id}&userId='+userId,
@@ -484,14 +327,197 @@
 		var data = evt.data;
 		data = JSON.parse(data);
 		
-		$('#'+data.seatId).children().eq(0).text(data.min);
-		$('#'+data.seatId).children().eq(1).text(data.sec);
-	}
-	
-	sock.onclose = function () {
+		// 사용 시작
+		if(data.processNum == 1){
+			alert(data.seatId+'번 자리에서 사용을 시작합니다.');
+			console.log(data.seatId+'번 자리에서 사용을 시작합니다.');
+			getSeatList();
+		}
 		
+		// 사용 중 충전
+		else if(data.processNum == 2){
+			alert(data.seatId+'번 자리에 시간이 충전되었습니다.');
+			console.log(data.seatId+'번 자리에 시간이 충전되었습니다.');
+			getSeatList();
+		}
+		
+		// 사용 중 자리변경
+		else if(data.processNum == 3){
+			alert(data.seatId+'번 자리로 좌석을 이동하였습니다.');
+			console.log(data.seatId+'번 자리로 좌석을 이동하였습니다.');
+			getSeatList();
+		}
+		
+		// 사용 종료
+		else if(data.processNum == 0){
+			alert(data.seatId+'번 자리에서 사용을 종료합니다.');
+			console.log(data.seatId+'번 자리에서 사용을 종료합니다.');
+			getSeatList();
+		}
+	}
+
+	/* 사용 중인 좌석 선택 */
+	function seatChoise(e ,seatId, userId){
+		
+		if($(e).hasClass('selected')){ // 선택된 상태
+			$(e).css({'opacity': '', 'border': ''});
+			$(e).removeClass('selected');
+			$('#selectedUserInfo').html('<span style="color:red">* 좌석을 선택하세요.</span>');
+			$('#orderListInfo').html('<span style="color:red">* 주문 대기 중인 음식이 없습니다.</span>');
+		}
+		else{ // 선택되지 않은 상태
+			$('.selected').css({'opacity': '', 'border': ''});
+			$('.selected').removeClass('selected');
+			
+			$(e).css({'opacity': '0.5', 'border': '2px solid black'});
+			$(e).addClass('selected');
+			$('#userId').text(userId); // modal창의 숨겨진 span태그의 텍스트 변경
+			
+			getUserInfo(userId);
+			getOrdersInfo(userId);
+		}
 	}
 	
+	/* 선택된 사용자 정보 불러오기 */
+	function getUserInfo(userId) {
+		$.ajax({ 
+			url:'${pageContext.request.contextPath}/admin/getUserInfo?storeId=${storeSelectSession.store_id}&userId='+userId,
+			type:'get',
+			
+			success:function(data){
+				var str = '<span style="color:black">* 이름: ' + data.user_name + '<br>';
+				str += '* 전화번호: ' + data.user_phone + '<br>';
+				str += '* 생년월일: ' + data.user_birth + '</span>';
+				$('#selectedUserInfo').html(str);
+				
+			} // end success 
+		}); // end ajax
+	}
+	
+	/* 선택된 사용자의 주문 목록 불러오기 */
+	function getOrdersInfo(userId) {
+		$.ajax({
+			url:'${pageContext.request.contextPath}/admin/getOrdersInfo?storeId=${storeSelectSession.store_id}&userId='+userId,
+			type:'get',
+				
+			success:function(data){
+				if(data.length > 0){
+					var str = '';
+					
+					for(var i=0; i<data.length; i++){
+						var foodNameArr = data[i].food_name.split(',');
+						var foodCntArr = data[i].food_cnt.split(',');
+						
+						str += '<table border="1" class="orders_table"><tr>';
+						str += '<td>주문번호</td><td>음식</td><td>수량</td><td>상태</td></tr>';
+						str += '<tr><td rowspan=' + (foodNameArr.length) + '>' + data[i].orders_id + '</td>';
+						
+						for(var j=0; j<foodNameArr.length-1; j++){
+							str += '<td>' + foodNameArr[j] + '</td><td>' + foodCntArr[j] +'</td>';
+							if(j==0){
+								str += '<td rowspan='+ (foodNameArr.length) +' onclick="process(this, '+ data[i].orders_id +')" class="process_btn">대기</td>';
+							}
+							str += '</tr>';
+						}
+						str += '</table>';
+						
+					}
+					$('#orderListInfo').html(str);
+				}
+				else {
+					$('#orderListInfo').html('<span style="color:red">* 주문 대기 중인 음식이 없습니다.</span>');
+				}
+			} // end success 
+		});
+	}
+	
+	/* 좌석 초기화 */
+	function getSeatList(){
+		$.ajax({
+			url: '${pageContext.request.contextPath}/admin/getSeatListAll?storeId=${storeSelectSession.store_id}', 
+			type: 'get',
+			
+			success:function(data){ 
+			
+				var str = '';
+				var useCnt = 0; // 사용 중인 좌석 수
+				var userPay = 0; // 사용 금액
+				var seatIdArr = [] // 좌석 번호
+				var minArr = []; // 남은 시간(분)
+				var secArr = []; // 남은 시간(초)
+				
+				$('#totalCnt').text(data.length); // 전체 좌석 수 표시
+				
+				for(var i=0; i<data.length; i++){
+					
+					if(data[i].user_id != null){ // 사용 중인 좌석
+						console.log('사용');
+						seatIdArr.push(data[i].seat_id);
+						
+						$.ajax({
+							url : '${pageContext.request.contextPath}/admin/getUserInfo?storeId=${storeSelectSession.store_id}&userId='+data[i].user_id,
+							type : 'get',
+							async: false,
+							
+							success : function(data) {
+								minArr.push(Math.floor(data.user_time/60)); /* 분 계산 */
+								secArr.push(Math.floor(data.user_time%60)); /* 초 계산 */
+								userPay = data.user_pay;
+							}
+						});
+					 
+						str += '<div id='+ data[i].seat_id +' class="using" onclick="seatChoise(this, '+ data[i].seat_id +', \''+ data[i].user_id +'\')">';
+						str += '<div style="height:25%"><span style="float:left; color:black">'+ data[i].seat_id +'</span><span>'+ data[i].user_id +'</span></div>';
+						str += '<div style="height:25%"><span class="min">'+ minArr[i] +'</span>분 <span class="sec">'+ secArr[i] +'</span>초</div>';
+						str += '<div style="height:25%">'+ userPay +'</div>';
+						str += '<button style="height:25%" onclick="deleteSeat(event, \''+ data[i].user_id +'\')">사용 종료</button>';
+						str += '</div>';
+						useCnt++; 
+					}
+					
+					else{ // 빈 좌석
+						str += '<div id='+ data[i].seat_id +' class="un_using">'+ data[i].seat_id +'</div>';
+					}
+				}
+				
+				$('#useCnt').text(useCnt); // 현재 사용 중인 좌석 수 표시
+				$('#seatList').html(str); // 좌석 표시
+
+				for(var i=0; i<seatIdArr.length; i++){
+					startCount(minArr[i], secArr[i], seatIdArr[i]);
+				}
+			} // end success
+		}); // end ajax
+	}
+	
+	/* 시간 카운트 */
+	function startCount(min, sec, seatId){
+		if(timerArr[seatId] != null){
+			clearInterval(timerArr[seatId]);
+		}
+		
+		$('#'+seatId).children().eq(1).children().eq(0).text(min); // 로드 후 1초 동안 빈 공백을 채운다.
+		$('#'+seatId).children().eq(1).children().eq(1).text(sec); // 로드 후 1초 동안 빈 공백을 채운다.
+		
+		timerArr[seatId] = setInterval(function (){
+			
+			$('#'+seatId).children().eq(1).children().eq(0).text(min);
+			$('#'+seatId).children().eq(1).children().eq(1).text(sec);
+			
+			if(sec == 1 && min == 0){ // 사용 시간 종료
+				clearInterval(timerArr[seatId]);
+
+			} else{
+				sec--;
+				
+				if(sec < 1){
+					min--;
+					sec = 59;
+				}
+			}
+		}, 1000); 
+	}
+
 	/* 가격에 콤마 표시 */
 	function numberWithCommas(x) {
 	    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");

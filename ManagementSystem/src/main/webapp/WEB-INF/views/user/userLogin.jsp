@@ -7,8 +7,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, width=device-width"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MS</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
@@ -19,8 +18,6 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.13/js/mdb.min.js"></script>
 <script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js" charset="utf-8"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/font.css" type="text/css">
-<script type="text/javascript" src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.0.js" charset="utf-8"></script>
-<script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
 <style>
 * {
 	font-size: 20px;
@@ -32,7 +29,9 @@ input {
 }
 
 html, body {
-	background-color: black;
+	/* background-color: black; */
+	background-image: url(<%= request.getContextPath ()%>/images/ms-background.jpg);
+	background-size: cover;
 	height: 100%;
 }
 
@@ -40,14 +39,7 @@ body {
 	margin: 0;
 }
 
-.container {
-	min-height: 80%;
-	position: relative;
-}
-
-.full { <%--
-	background-image:
-		url("<%=request.getContextPath()%>/images/login-back.jpg"); --%>
+.full {
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -70,8 +62,8 @@ body {
 	left: 0;
 	right: 0;
 	margin: auto;
-	width: 30%;
-	height: 30%;
+	width: 350px;
+	height: 60%;
 }
 
 .select_pick {
@@ -88,11 +80,47 @@ body {
 	border-radius: 15px;
 }
 
-.socialimage{
-	height: 63.5px;
+.socialimage {
+	height: 65px;
 	display: inline-block;
 }
 
+#loginBtn, #singupBtn {
+	width: 49%;
+	margin: 0px;
+}
+
+/* 아이디 기억하기 테두리 */
+#remember_label {
+	text-shadow: -1px 0 #000000, 0 1px #000000, 1px 0 #000000, 0 -1px #000000;
+}
+
+/* 아이디비밀번호 찾기 */
+#idANDpw {
+	text-shadow: -1px 0 #000000, 0 1px #000000, 1px 0 #000000, 0 -1px #000000;
+}
+
+/* 모바일 최적화 */
+@media ( max-width : 767px ) {
+	.area_inputs {
+		width: 270px;
+	}
+	#loginBtn, #singupBtn {
+		width: 100%;
+	}
+	#loginBtn {
+		margin-bottom: 5px;
+	}
+	.socialimage {
+		height: 49px;
+	}
+	html, body {
+		background-position: center;
+	}
+	#spanLoginCheck {
+		font-size: 18px;
+	}
+}
 </style>
 </head>
 <%
@@ -105,56 +133,50 @@ body {
 	<c:if test="${not empty cookie.user_check}">
 		<c:set value="checked" var="checked"/>
 	</c:if>
+	<div style="float: right; margin-top: 10px; margin-right: 10px;">
+		<a href="admin"> 
+			<img src="${pageContext.request.contextPath}/images/adminLogin-move.png" style="height: 40px; visibility: hidden;" />
+		</a>
+	</div>
 	<div class="full">
-		<div class="wow flipInY" style="float: right; margin-top: 30px; margin-right: 30px;">
-			<a href="admin"> 
-				<img src="${pageContext.request.contextPath}/images/adminLogin-move.png" style="height: 50px;" />
-			</a>
-		</div>
-		<div class="container">
 			<div class="area_inputs wow fadeIn">
 				<div class="form-group">
-					<label class="font-weight-bold text-white" for="inputId">아이디</label>
 					<div>
 						<input type="text" class="form-control" id="inputId" name="user_id" value="${cookie.user_check.value}" placeholder="아이디">
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="font-weight-bold text-white" for="inputPassword">비밀번호</label>
 					<div>
 						<input type="password" class="form-control" id="inputPassword" name="user_pw" placeholder="비밀번호">
 					</div>
 				</div>
 				<div class="form-group">
-					<span class="font-weight-bold text-white bg-dark"
-						id="spanLoginCheck"></span>
+					<span class="font-weight-bold text-white bg-dark" id="spanLoginCheck"></span>
 				</div>
 				<div class="form-group">
-					<label class="font-weight-bold text-white"> 
+					<label id="remember_label" class="font-weight-bold text-white"> 
 						<input type="checkbox" id="remember_us" name="remember_userId" ${checked}> 아이디 기억하기
 					</label>
-					<div class="interval_height a_none">
+					<div id="idANDpw" class="interval_height a_none">
 						<a href="${pageContext.request.contextPath}/user/userSearch">&nbsp; 아이디 / 비밀번호 찾기</a>
 					</div>
-					<div>
-						<button id="loginBtn" type="button"	class="btn btn-primary btn-block">로그인</button>
+					<div class="signin">
+						<button id="loginBtn" type="button"	class="btn btn-primary btn-inline-block">로그인</button>
+						<a id="singupBtn" class="btn btn-deep-orange btn-inline-block" href="${pageContext.request.contextPath}/user/reg">회원가입</a>
 					</div>
 				</div>
-				<div class="form-group">
-					<a class="btn btn-deep-orange btn-block" href="${pageContext.request.contextPath}/user/reg">회원가입</a>
-				</div>
 				<div class="form-group socialimage" id="kakaoBtn">
-					<a href="https://kauth.kakao.com/oauth/authorize?client_id=85f4a0fdfed755ce3d9b2b081af17f44&redirect_uri=http://localhost:8080/MS/kakaologin&response_type=code">
+					<a href="https://kauth.kakao.com/oauth/authorize?client_id=85f4a0fdfed755ce3d9b2b081af17f44&redirect_uri=http://ec2-54-180-123-73.ap-northeast-2.compute.amazonaws.com/MS/kakaologin&response_type=code">
 						<img id="socialimage" src="${pageContext.request.contextPath}/images/logo-kakao.png" height="100%"/>
 					</a>
 				</div>
 				<div class="form-group socialimage" id="naverBtn">
-					<a href="https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=BLxuRdNAKQL9y0hx6ugp&redirect_uri=http://localhost:8080/MS/naverlogin&state=<%= state %>">
+					<a href="https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=BLxuRdNAKQL9y0hx6ugp&redirect_uri=http://ec2-54-180-123-73.ap-northeast-2.compute.amazonaws.com/MS/naverlogin&state=<%= state %>">
 						<img src="${pageContext.request.contextPath}/images/logo-naver.png" height="100%"/>
 					</a>
 				</div>
 				<div class="form-group socialimage" id="githubBtn">
-					<a href="https://github.com/login/oauth/authorize?client_id=ca3c1f71782ed1d5d649&redirect_uri=http://localhost:8080/MS/githublogin">
+					<a href="https://github.com/login/oauth/authorize?client_id=ca3c1f71782ed1d5d649&redirect_uri=http://ec2-54-180-123-73.ap-northeast-2.compute.amazonaws.com/MS/githublogin">
 						<img src="${pageContext.request.contextPath}/images/logo-github.png" height="100%"/>
 					</a>
 				</div>
@@ -169,9 +191,7 @@ body {
 					</a>
 				</div>
 			</div>
-		</div>
-	</div>
-	
+		</div>	
 </body>
 <script>
 	$(document).ready(function(){

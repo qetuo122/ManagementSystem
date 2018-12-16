@@ -1,5 +1,7 @@
 package com.bit.ms.admin.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +28,6 @@ public class AdminMypageController {
 		AdminVO adminVo = (AdminVO) session.getAttribute("adminSession");
 		String admin_id = adminVo.getAdmin_id();
 
-		//매장이 다르나 아이디는 같은 관리자가 있으므로
-		//리스트로 받아서 0번째를 불러옴
 		model.addAttribute("admin",service.getAdmin(admin_id));
 		model.addAttribute("store",service.getStore(admin_id));
 		
@@ -90,10 +90,23 @@ public class AdminMypageController {
 	}
 	//관리자 매장 삭제
 	@RequestMapping(value = "/admin/adminStoreDelete", method = RequestMethod.POST)
-	public String deleteStore(AdminVO adminVo) {
+	public String deleteStore(AdminVO adminVo, HttpSession session) {
 		//System.out.println("삭제 : " + adminVo);
 		int store_id = adminVo.getStore_id();
-		service.storeDelete(store_id);
+		StoreVO storeDetail = service.getStoreDetail(store_id); // 해당 매장의 정보를 가져옴
+		
+		@SuppressWarnings("unchecked")
+		List<StoreVO> list = (List<StoreVO>) session.getAttribute("storeSession"); //모든 매장정보의 세션을 가져옴
+		
+		// 세션을 리스트로 받아온후 get으로 하나씩 뽑아와서 삭제대상 매장과 비교한 후 일치하면 세션에서 삭제 ㄱㄱ
+		for(int i = 0; i < list.size(); i++) {
+			if(list.get(i).getStore_id() == storeDetail.getStore_id()) {
+				list.remove(list.get(i));
+			}
+		}
+		
+		session.setAttribute("storeSession", list); // 지운 리스트를 세션에 저장
+		service.storeDelete(store_id); // DB에서 지움
 		
 		return "admin/adminMypage";
 	}

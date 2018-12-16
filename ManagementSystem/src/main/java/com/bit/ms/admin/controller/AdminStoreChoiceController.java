@@ -3,6 +3,7 @@ package com.bit.ms.admin.controller;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.annotations.Param;
@@ -54,13 +55,26 @@ public class AdminStoreChoiceController {
 	}
 
 	@RequestMapping(value = "/admin/storeReg", method = RequestMethod.POST)
-	public String storeChoiceSubmit(StoreVO storeVO) {
+	public String storeChoiceSubmit(StoreVO storeVO, HttpSession session) {
 
 		// 기본주소와 상세주소를 하나의 주소로 합쳐줌
 		storeVO.setStore_address(storeVO.getStore_address1() + " " + storeVO.getStore_address2());
-		adminMypageService.storeAdd(storeVO);
-
-		return "redirect:/admin";
+		int store_id = adminMypageService.storeAdd(storeVO);
+		//storeVO.setStore_id(store_id);
+		System.out.println("매장 등록 시 storeVO : " + storeVO);
+		StoreVO selectStore = (StoreVO) session.getAttribute("storeSelectSession");
+		
+		@SuppressWarnings("unchecked")
+		List<StoreVO> list = (List<StoreVO>) session.getAttribute("storeSession");
+		list.add(storeVO);
+		
+		if(selectStore != null) {
+			return "redirect:/admin/adminMypage"; // 마이페이지에서 매장추가를 할 경우 다시 마이페이지로 이동
+		} else {
+			String admin_id = storeVO.getAdmin_id();
+			return "redirect:/admin/storeChoice?id=" + admin_id; // 막 로그인한 후 매장을 만들었을경우 매장등록 후 매장선택페이지로 이동
+		}
+		
 	}
 
 	@RequestMapping(value = "/admin/storeCheck/{re_name}", method = RequestMethod.GET)

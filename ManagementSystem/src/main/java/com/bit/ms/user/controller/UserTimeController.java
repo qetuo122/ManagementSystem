@@ -41,15 +41,10 @@ public class UserTimeController {
 	
 	@RequestMapping(value="/user/updateSaveTime", method=RequestMethod.GET)
 	@ResponseBody
-	public void updateSaveTime(@RequestParam("useTime") long useTime,
-								@RequestParam("userId") String userId,
+	public int updateSaveTime(@RequestParam("userId") String userId,
 								@RequestParam("storeId") int storeId) {
 		
-		int resultCnt = service.updateSaveTime(useTime, userId, storeId);
-		
-		if(resultCnt == 1) {
-			System.out.println("사용 시간: " + useTime + " 차감");
-		}
+		return service.updateSaveTime(userId, storeId);
 	}
 	
 	@RequestMapping("/user/updateSeatChange")

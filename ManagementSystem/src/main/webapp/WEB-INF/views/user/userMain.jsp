@@ -19,6 +19,7 @@ html, body {
 }
 
 .userMain_container {
+	display: none;
 	text-align: center;
 	padding: 30px;
 	height: 100%;
@@ -26,19 +27,20 @@ html, body {
 
 .left_area, .center_area, .right_area {
 	display: inline-block;
-	width: 33%;
+	width: 50%;
 	height: 100%;
 	padding-top: 10px;
 	margin-bottom: 10px;
 	border: 1px solid black;
-	border-top-left-radius: 15px;
-	border-bottom-left-radius: 15px;
 	overflow-y: scroll;
 }
 
+.center_area, .right_area {
+	display: none;
+}
+
 .title_text {
-	font-size: 40px;
-	margin-bottom: 20px;
+	font-size: 35px;
 }
 
 .content_text {
@@ -54,8 +56,8 @@ html, body {
 .time_table td {
 	width: 250px;
 	height: 100px;
-	border-radius: 15px;
 	font-size: 30px;
+	border-radius: 15px;
 	color: gray;
 	text-align: center;
 	background-color: lightgray;
@@ -108,7 +110,6 @@ html, body {
   to {opacity: 1}
 }
 
-/* ///////////////////////////////////////////////////////////// */
 /* 좌석 사용 중인 사용자에게 보여질 화면 스타일 지정 */
 .userUsingMain_container {
 	display: none;
@@ -153,6 +154,34 @@ html, body {
 	opacity: 0.7;
 }
 
+.prev_btn {
+	float: left;
+	margin-left: 10px;
+	margin-right: -20px;
+}
+
+.prev_btn:hover {
+  	background-color: rgba(0,0,0,0.8);
+}
+
+
+@media ( max-width : 767px ) {
+	.left_area, .center_area, .right_area {
+		width: 300px;
+	}
+	.title_text {
+		font-size: 25px;
+		margin-bottom: 0px;
+	}
+	.using_wrap {
+		width: 300px;
+	}
+	.userUsingMain_container {
+		font-size: 27px;
+	}
+}
+
+
 </style>
 </head>
 <body>
@@ -162,7 +191,7 @@ html, body {
 
 	<div class="userMain_container">
 		<div class="title_text">안녕하세요. ${userSession.user_name}님!</div>
-		<div class="title_text">${storeSelectSession.store_name} 방문을 환영합니다:p</div>
+		<div class="title_text" style="margin-bottom: 20px">${storeSelectSession.store_name} 방문을 환영합니다:p</div>
 		
 		<div class="left_area">
 			<div class="content_text">자리선택</div>
@@ -172,7 +201,11 @@ html, body {
 		</div>
 
 		<div class="center_area">
-			<div class="content_text">시간선택</div>
+			<div class="content_text">
+				<a class="prev_btn">&#10094;</a> 
+				<span>시간선택</span>
+			</div>
+			
 			<hr>
 			<table id="timeTable" class="time_table">
 			</table>
@@ -198,117 +231,35 @@ html, body {
 </body>
 
 <script>
-	var selectedST = {}; // 좌석과 시간을 담을 객체 (동적 생성)
-		
+	var selectedSeatId = null;
+	var selectedTimeId = null;
+	var isSockOpen = false;
+	var timer = null;
+	
 	$(document).ready(function() {
-		createTable($('#timeTable'), 6, 2); // 시간 테이블 동적 생성
 		
-		$.ajax({ // 좌석 리스트 불러오기
-			url : '${pageContext.request.contextPath}/user/getSeatListAll?storeId=${storeSelectSession.store_id}',
-			type : 'get',
-
-			success : function(data) {
-				var str = '';
-				var userId = null; // 사용자 아이디
-				var userTime = 0; // 사용자의 남은 시간
-				var seatId = null; // 좌석 번호
-				var useCnt = 0; // 사용 중인 좌석 수
-				
-				$('#totalCnt').text(data.length); // 전체 좌석 수 변경
-				
-				for(var i=0; i<data.length; i++){
-					if(data[i].user_id != null){
-						if(data[i].user_id == '${userSession.user_id}'){
-							userId = data[i].user_id; // 사용 중인 사용자 아이디 가져오기
-							seatId = data[i].seat_id; // 사용 중인 좌석 번호 가져오기
-							console.log(seatId);
-							
-							$.ajax({
-								url : '${pageContext.request.contextPath}/admin/getUserInfo?storeId=${storeSelectSession.store_id}&userId='+userId,
-								type : 'get',
-								async: false,
-								
-								success : function(data) {
-									userTime = data.user_time;
-								}
-							});
-						}
-						str += '<div class="using" style="font-size:50px; color:red">X</div>';
-						useCnt++;
-					}
-					else{
-						str += '<div onclick="seatChoise(this, '+ data[i].seat_id +')">'+ data[i].seat_id +'</div>';
-					}
-				}
-				$('#useCnt').text(useCnt); // 현재 사용 중인 컴퓨터 수 변경
-				$('.seat_list').html(str); // 자리 변경 modal창의 테이블과 같이 업데이트
-				
-				if(userId != null){
-					var min = Math.floor(userTime/60); // 분 계산
-					var sec = Math.floor(userTime%60); // 초 계산
-					
-					$('#usingSeatNum').text(seatId); // 좌석 번호 변경
-					$('#min').text(min+'분');
-					$('#sec').text(sec+'초');
-					
-					/* sock.onopen = function(){
-						
-					} */
-					
-					var timer = setInterval(function (){
-						$('#min').text(min+'분');
-						$('#sec').text(sec+'초');
-						
-						if(sec == 1 && min == 0){ // 사용 시간 종료
-							clearInterval(timer);
-
-						} else{
-							sec--;
-							
-							if(sec < 1){
-								min--;
-								sec = 59;
-							}
-						}
-						
-						var seatUser = {
-								seatId : seatId,
-								min : min,
-								sec : sec,
-						};
-
-						sock.send(JSON.stringify(seatUser)); // 서버로 메시지 전송
-						
-					}, 1000);
-					
-					/* modal 시간 select option 초기화  */
-					for (var i = 1; i <= 12; i++) {
-						var option = '<option value='+ i + '>' + i + ' 시간</option>';
-						$('#selectAddTime').append(option);
-					}
-					
-					$('.userMain_container').hide();
-					$('.userUsingMain_container').show();
-					
-				}
-			}
-		}); // end ajax
+		sock.onopen = function () {
+			isSockOpen = true;
+		}
 		
+		getSeatList(); // 좌석 불러오기
+		createTime($('#timeTable'), 6, 2); // 시간 테이블 동적 생성
 		
 		/* 사용 전 Modal창 충전하기 버튼 */
 		$('#addTimeBtn').on('click', function() {
-			var seatId = selectedST.seat;
-			var addTime = selectedST.time*60*60; // 초 단위 저장
-			
-			$.ajax({
-				// 로그인한 아이디와 충전시간, 선택한 좌석 번호, 매장 번호 넘겨 줌.
-				url: '${pageContext.request.contextPath}/user/updateAddTime?userId=${userSession.user_id}&addTime=' + addTime + '&seatId=' + seatId + '&storeId=${storeSelectSession.store_id}', 
-				type: 'get',
-				
-				success:function(){
-					location.reload();
-				} // end success  
-			}); // end ajax
+			updateSeat(selectedSeatId, selectedTimeId);
+		});
+		
+		/* 사용 전 사용 시간 존재할 때 Modal 충전하기 */
+		$('#alreadyTimeBtn').on('click', function () {
+			$('#alreadyTimeModal').hide();
+			$('.left_area').attr('style', 'display:none');
+			$('.center_area').attr('style', 'display:inline-block');
+		});
+		
+		/* 사용 전 사용 시간 존재할 때 바로 시작 하기 */
+		$('#startBtn').on('click', function () {
+			updateSeat(selectedSeatId, 0);
 		});
 		
 		/* 사용 중 충전하기 */
@@ -335,28 +286,45 @@ html, body {
 				type:'get',
 				
 				success:function(data){
-					location.reload();
+					sendInfo($('#usingSeatNum').text(), 2);
+					$('#usingAddTimeModal').hide();
+					getSeatList();
 				}
 			});
 		});
 		
 		/* 사용 중 Modal창 자리이동 버튼 */
 		$('#usingSeatChangeBtn').on('click', function () {
-			if(selectedST.seat == null){
+			if(selectedSeatId == null){
 				alert('이동하실 좌석을 선택하세요.');
 				return;
 			}
 			var changeConfirm = confirm('정말 이동하시겠습니까?');
 			
 			if(changeConfirm){
-				$.ajax({
-					url: '${pageContext.request.contextPath}/user/updateSeatChange?storeId=${storeSelectSession.store_id}&userId=${userSession.user_id}&seatId='+selectedST.seat,
-					type:'get',
-					
-					success:function(data){
-						location.reload();
-					}
-				});
+				if(overlapped(selectedSeatId)){
+					alert('이미 사용중인 좌석입니다.');
+					location.reload();
+				}
+				
+				else {
+					$.ajax({
+						url: '${pageContext.request.contextPath}/user/updateSeatChange',
+						type:'get',
+						data: {
+							userId: '${userSession.user_id}',
+							storeId: '${storeSelectSession.store_id}',
+							seatId: selectedSeatId
+						},
+						
+						success:function(data){
+							sendInfo(selectedSeatId, 3);
+							$('#alreadyTimeModal').hide();
+							$('#usingSeatChangeModal').hide();
+							getSeatList();
+						}
+					});
+				}
 			}
 		});
 		
@@ -365,114 +333,314 @@ html, body {
 			var ordersConfirm = confirm('정말 종료하시겠습니까?');
 			
 			if(ordersConfirm){
-				$.ajax({
-					// 유저 아이디와 스토어 번호 넘겨 줌.
-					url: '${pageContext.request.contextPath}/user/deleteUsingInfo?userId=${userSession.user_id}&storeId=${storeSelectSession.store_id}', 
-					type: 'get',
-					
-					success:function(){
-						location.reload();
-					} // end success  
-				});
+				deleteSeat();
 			}
+		});
+		
+		/* 시간 선택 창 이전 버튼 */
+		$('.prev_btn').on('click', function () {
+			$('.center_area').attr('style', 'display:none');
+			$('.left_area').attr('style', 'display:inline-block');
+			selectedReset('.selected'); 
+			selectedTimeId = null;
 		});
 		
 		/* 시간 충전 modal 창 닫기 버튼 클릭 시 처리 */
-		$('.close').on('click', function() {
-			selectedReset();
-			$('#addTimeModal').hide();
-			$('#usingAddTimeModal').hide();
-			$('#usingSeatChangeModal').hide();
+		$('.close').each(function(num){
+			$(this).on('click', function(){
+				if(num == 1){
+					$('#addTimeModal').hide();
+					selectedReset('.selected');
+					selectedTimeId = null;
+					
+				}
+				else if(num == 2){
+					$('#alreadyTimeModal').hide();
+					selectedReset('.selected'); 
+					selectedSeatId = null;
+				}
+				
+				else if(num == 3){
+					$('#usingAddTimeModal').hide();
+				}
+				
+				else if(num == 4){
+					$('#usingSeatChangeModal').hide();
+				}
+			});
 		});
-
+		
 		/* modal 창 외 윈도우 클릭 시 처리 */
 		$(window).on('click', function() {
 			if (event.target == $('#addTimeModal').get(0)) {
-				selectedReset();
 				$('#addTimeModal').hide();
+				selectedReset('.selected'); 
+				selectedTimeId = null;
 			}
-			if(event.target == $('#usingAddTimeModal').get(0)){
+			else if(event.target == $('#alreadyTimeModal').get(0)){
+				$('#alreadyTimeModal').hide();
+				selectedReset('.selected'); 
+				selectedSeatId = null;
+			}
+			else if(event.target == $('#usingAddTimeModal').get(0)){
 				$('#usingAddTimeModal').hide();
 			}
-			if(event.target == $('#usingSeatChangeModal').get(0)){
+			else if(event.target == $('#usingSeatChangeModal').get(0)){
 				$('#usingSeatChangeModal').hide();
 			}
 		});
+		
 	}); // end document.ready
 	
-	/* 좌석 선택 처리 */
-	function seatChoise(e, seatId) {
-		$('.seat_list > div').each(function (index, item) {
-			choiseProcess(seatId, item, e, 'seat');
+	function getSeatList(){
+		$.ajax({ // 좌석 리스트 불러오기
+			url : '${pageContext.request.contextPath}/user/getSeatListAll?storeId=${storeSelectSession.store_id}',
+			type : 'get',
+
+			success : function(data) {
+				var str = '';
+				var usingSeat = false;
+				var seatId = null;
+				var totalCnt = data.length;
+				var useCnt = 0;
+				
+				for(var i=0; i<data.length; i++){	
+					if(data[i].user_id != null){
+						str += '<div class="using" style="font-size:50px; color:red">X</div>';
+						useCnt++;
+						
+						if(data[i].user_id == '${userSession.user_id}'){
+							seatId = data[i].seat_id;
+							usingSeat = true;
+						}
+					}
+					
+					else {
+						str += '<div onclick="selectedSeat(this, '+ data[i].seat_id +')">'+ data[i].seat_id +'</div>';
+					}
+					$('.seat_list').html(str);
+				}
+				
+				if(usingSeat){
+					if(timer != null){
+						clearInterval(timer);
+					}
+					
+					$.ajax({
+						url : '${pageContext.request.contextPath}/admin/getUserInfo',
+						type : 'get',
+						data : {
+							userId : '${userSession.user_id}',
+							storeId : '${storeSelectSession.store_id}'
+						},
+						
+						success : function(data) {
+							var min = Math.floor(data.user_time/60); // 분 계산
+							var sec = Math.floor(data.user_time%60); // 초 계산
+							
+							$('#usingSeatNum').text(seatId); // 좌석 번호 변경
+							$('#min').text(min+'분');
+							$('#sec').text(sec+'초');
+							
+							timer = setInterval(function (){
+								$('#min').text(min+'분');
+								$('#sec').text(sec+'초');
+								
+								if(sec == 1 && min == 0){ // 사용 시간 종료
+									clearInterval(timer);
+									deleteSeat();
+
+								}
+								else{
+									sec--;
+									
+									if(sec < 1){
+										min--;
+										sec = 59;
+									}
+								}
+							}, 1000); // end timer
+							
+							/* modal 시간 select option 초기화  */
+							for (var i = 1; i <= 12; i++) {
+								var option = '<option value='+ i + '>' + i + ' 시간</option>';
+								$('#selectAddTime').append(option);
+							}
+							
+							$('.userUsingMain_container').show();
+						} // end success
+					});			
+				}
+				
+				else {
+					$('#useCnt').text(useCnt); // 현재 사용 중인 컴퓨터 수 변경
+					$('#totalCnt').text(totalCnt); // 전체 좌석 수 변경
+					$('.userMain_container').show();
+				}
+			}
 		});
+	}
+	
+	// 좌석 중복 선택 시 처리
+	function overlapped(seatId){
+		var overlapped = false;
+		
+		$.ajax({ 
+			url : '${pageContext.request.contextPath}/user/getSeatListAll?storeId=${storeSelectSession.store_id}',
+			type : 'get',
+			async : false,
+			
+			success:function(data){
+				for(var i=0; i<data.length; i++){
+					if(data[i].user_id != null){ 
+						if(data[i].seat_id == seatId){
+							overlapped = true;
+						}
+					}
+				}
+			} 
+		});
+		return overlapped;
+	}
+	
+	/* 좌석 선택 처리 */
+	function selectedSeat(obj, seatId) {
+		if($(obj).hasClass('selected')){
+			selectedReset(obj);
+			selectedSeatId = null;
+		}
+	
+		else{
+			selectedReset('.selected');
+			$(obj).css('background-color', '#3F729B');
+			$(obj).css('color', 'white');
+			$(obj).addClass('selected');
+
+			selectedSeatId = seatId;
+			
+			$.ajax({
+				url : '${pageContext.request.contextPath}/admin/getUserInfo',
+				type : 'get',
+				data : {
+					userId : '${userSession.user_id}',
+					storeId : '${storeSelectSession.store_id}'
+				},
+				
+				success : function(data) {
+					
+					// 남은 시간 존재
+					if(data.user_time != 0){ 
+						$('#alreadySelectedInfo').children().eq(0).text('${userSession.user_name}');
+						$('#alreadySelectedInfo').children().eq(1).text(seatId);
+						$('#alreadySelectedInfo').children().eq(3).text(Math.floor(data.user_time/60));
+						$('#alreadySelectedInfo').children().eq(4).text(Math.floor(data.user_time%60));
+						$('#alreadyTimeModal').show();				
+					}
+					
+					else {
+						$('.left_area').attr('style', 'display:none');
+						$('.center_area').attr('style', 'display:inline-block');
+					}
+				}
+			});
+		}
 	}
 	
 	/* 시간 선택 처리 */
-	function timeChoise(e) {
-		$('#timeTable > tr > td').each(function (index, item) {
-			choiseProcess(index, item, e, 'time');
-		});
-	}
+	function selectedTime(obj, time) {
+		if($(obj).hasClass('selected')){
+			selectedReset(obj);
+			selectedTimeId = null;
+		}
 	
-	/* 선택 처리 과정 공통 */
-	function choiseProcess(id, item, e, property) {
-		if(item == e){ 
-
-			if($(e).hasClass('selected')){
-				$(e).css('background-color', '');
-				$(e).css('color', '');
-				$(e).removeClass('selected');
-				
-				if(property == 'seat'){ selectedST.seat = null;	}
-				else { selectedST.time = null; }
-			}
-			else{
-				$(e).css('background-color', '#3F729B');
-				$(e).css('color', 'white');
-				$(e).addClass('selected');
-				
-				if(property == 'seat'){ selectedST.seat = id; } // 실제 데이터베이스의 seat_id 저장
-				else { selectedST.time = (id+1); } // index 저장
-			}
+		else{
+			selectedReset('.selected');
+			$(obj).css('background-color', '#3F729B');
+			$(obj).css('color', 'white');
+			$(obj).addClass('selected');
+			
+			selectedTimeId = time;
 		}
 		
-		else {
-			if(!($(item).hasClass('using'))){ // 사용 중인 좌석이 아닌 경우에만
-				$(item).css('background-color', '');
-				$(item).css('color', '');
-				$(item).removeClass('selected');
-			}
-		}
-		
-		if(selectedST.seat != null && selectedST.time != null){ // 시간과 좌석이 모두 선택되었으면
+		if(selectedSeatId != null && selectedTimeId != null){ // 시간과 좌석이 모두 선택되었으면
 			$('#selectedInfo').children().eq(0).text('${userSession.user_name}');
-			$('#selectedInfo').children().eq(1).text(selectedST.seat + '번');
-			$('#selectedInfo').children().eq(2).text(selectedST.time + '시간(' + numberWithCommas(selectedST.time*1000) + '원)');
+			$('#selectedInfo').children().eq(1).text(selectedSeatId + '번');
+			$('#selectedInfo').children().eq(2).text(selectedTimeId + '시간(' + numberWithCommas(selectedTimeId*1000) + '원)');
 			$('#addTimeModal').show();
 		}
 	}
 	
-	/* 선택한 좌석과 시간 초기화 */
-	function selectedReset() {
-		$('.selected').css('background-color', '');
-		$('.selected').css('color', '');
-		$('.selected').removeClass();
+	// 시간 충전
+	function updateSeat(seatId, addTime){
+		if(overlapped(seatId)){
+			alert('이미 사용중인 좌석입니다.');
+		}
 		
-		selectedST.seat =  null;
-		selectedST.time =  null;
+		else {
+			$.ajax({
+				// 로그인한 아이디와 충전시간, 선택한 좌석 번호, 매장 번호 넘겨 줌.
+				url: '${pageContext.request.contextPath}/user/updateAddTime', 
+				type: 'get',
+				async: false,
+				
+				data: {
+					userId : '${userSession.user_id}',
+					addTime : addTime*60*60,
+					seatId : seatId,
+					storeId : '${storeSelectSession.store_id}'
+				},
+				
+				success:function(){
+					if(isSockOpen){
+						console.log('데이터 보냄');
+						sendInfo(seatId, 1);
+					}
+				} // end success  
+			}); // end ajax	
+		}
+		location.reload();
+	}
+	
+	/* 선택한 좌석과 시간 초기화 */
+	function selectedReset(obj) {
+		$(obj).css('background-color', '');
+		$(obj).css('color', '');
+		$(obj).removeClass();
+	}
+	
+	// 종료 좌석 초기화
+	function deleteSeat(){
+		$.ajax({
+			// 유저 아이디와 스토어 번호 넘겨 줌.
+			url: '${pageContext.request.contextPath}/user/deleteUsingInfo', 
+			type: 'get',
+			data: {
+				userId: '${userSession.user_id}',
+				storeId: '${storeSelectSession.store_id}'
+			},
+			
+			success:function(){
+				if(isSockOpen){
+					console.log('데이터보냄');
+					sendInfo($('#usingSeatNum').text(), 0); // 종료된 좌석번와 처리 넘버
+				}
+				location.reload();
+			} 
+		});
 	}
 	
 	/* 시간 테이블 동적 생성(테이블 객체, 행, 열) */
-	function createTable(obj, r, c) {
+	function createTime(obj, r, c) {
 		var str = '';
 		var id = 1;
+		var cnt = 0;
 		var price = 1000;
 
 		for (var i = 0; i < r; i++) {
 			str += '<tr>';
 
 			for (var j = 0; j < c; j++) {
-				str += '<td onclick="timeChoise(this)">';
+				str += '<td onclick="selectedTime(this, '+ (++cnt) +')">';
 				str += '<div>'+ numberWithCommas(price) +'원</div>';
 				price += 1000;
 				
@@ -485,7 +653,7 @@ html, body {
 		}
 		$(obj).append(str);
 	}
-	
+
 	/* 가격에 콤마 표시 */
 	function numberWithCommas(x) {
 	    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -493,4 +661,3 @@ html, body {
 
 </script>
 </html>
-

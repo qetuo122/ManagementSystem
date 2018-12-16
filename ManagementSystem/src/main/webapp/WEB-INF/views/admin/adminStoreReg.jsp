@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,7 +25,7 @@ body {
 
 .container {
 	min-height: 100%;
-	width: 30%;
+	width: 350px;
 }
 
 .titleStyle {
@@ -106,7 +107,12 @@ small {
 			</div> -->
 			<!-- 버튼들 -->
 			<div class="reg_button">
-				<a class="btn btn-danger px-3" href="${pageContext.request.contextPath}/admin">취소</a>
+				<c:if test="${empty storeSelectSession.store_name}">
+					<a class="btn btn-danger px-3" href="${pageContext.request.contextPath}/admin/storeChoice?id=${adminSession.admin_id}">취소</a>
+				</c:if>
+				<c:if test="${!empty storeSelectSession.store_name }">
+					<a class="btn btn-danger px-3" href="${pageContext.request.contextPath}/admin/adminMypage">취소</a>
+				</c:if>	
 				<button type="submit" class="btn btn-primary px-3" id="reg_submit">등록</button>
 			</div>
 		</form>

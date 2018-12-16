@@ -123,6 +123,7 @@ body {
 	padding: 10px;
 	border-radius: 2px 0px 0px 0px;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+	font-family: 'Youth', sans-serif;
 }
 .messages p {
 	font-size: 0.8em;
@@ -158,6 +159,7 @@ body {
 	padding: 5px;
 	border: none;
 	font-size: 22px;
+	font-family: 'Youth', sans-serif;
 }
 #sendButton {
 	float:left;
@@ -208,6 +210,12 @@ body {
 	bottom: 10px;
 	background-color: #787878;
 	padding: 15px;
+}
+@font-face {
+	font-family: 'Youth';
+	font-style: normal;
+	font-weight: 400;
+	src: url('//cdn.jsdelivr.net/korean-webfonts/1/orgs/othrs/kywa/Youth/Youth.woff2') format('woff2'), url('//cdn.jsdelivr.net/korean-webfonts/1/orgs/othrs/kywa/Youth/Youth.woff') format('woff');
 }
 </style>
 </head>

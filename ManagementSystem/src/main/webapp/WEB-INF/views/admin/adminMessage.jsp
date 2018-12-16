@@ -21,11 +21,11 @@
 	position : absolute;
 	top : 5%;
 	left : 50%;
-	width : 700px;
+	width : 80%;
 	background-color : white;
 	text-align : center;
 	border-radius: 10px;
-	margin-left : -350px;
+	margin-left : -40%;
 	height : 83%;
 	overflow : overlay;
 }
@@ -40,10 +40,6 @@
 	border : none;
 	font-weight : bold;
 	font-size : 15px;
-}
-.post {
-	padding: 0 1.5%;
-	height : 80%;
 }
 .comment-form .form-control {
 	border: 0px;
@@ -73,30 +69,24 @@ hr{
 	font-weight : bold;
 	font-size : 20px;
 }
-@media ( min-width :992px) {
-	.post {
-		width: 50%;
-		max-width: 500px;
-		margin: 0 auto;
-		background-color : white;
-		border-radius : 10px;
-		height : 80%;
-	}
-	.comment-form label {
-		position: absolute;
-		width: 200px;
-	}
-	.comment-form .name, .comment-form .email, .comment-form .message {
-		top: -27px;
-		font-weight: bold;
-	}
+.post {
+	width: 50%;
+	max-width: 500px;
+	margin: 30px auto;
+	background-color : white;
+	border-radius : 10px;
+	height : 80%;
+	padding: 0 1.5%;
 }
-@media ( min-width :1200px) {
-	.post {
-		max-width: 525px;
-		height : 80%;
-	}
+.comment-form label {
+	position: absolute;
+	width: 200px;
 }
+.comment-form .name, .comment-form .email, .comment-form .message {
+	top: -27px;
+	font-weight: bold;
+}
+
 #submit {
 	font-size : 15px;
 }
@@ -114,9 +104,10 @@ hr{
 	height: 250px;
 	border-right : 3px solid #8e8e8e;
 	border-bottom : 3px solid #8e8e8e;
-	margin-left: 65px;
+	margin-left: 25px;
+	margin-top : 20px;
 	list-style: none;
-	margin-bottom: 30px;
+	margin-bottom: 20px;
 	border-radius: 10px;
 	position : relative;
 }
@@ -186,13 +177,12 @@ hr{
 	background-image : url("${pageContext.request.contextPath}/images/message1.png");
 	background-size : 100%;
 	float : right;
-	width : 70px;
-	height : 55px;
+	width : 50px;
+	height : 40px;
 	border-radius: 10px;
 }
 .messageIconWrap:hover{
 	cursor : pointer;
-	-webkit-transform:scale(1.3); 
 	transition: all 0.3s ease-in-out;
 }
 .messageBtn:hover{
@@ -201,7 +191,7 @@ hr{
 </style>
 </head>
 <body>
-<span class = "messageIconWrap" style = "position : absolute; top : 90%; left : 3%">
+<span class = "messageIconWrap" style = "position : fixed; bottom : 20px; margin-left : 2%;">
 	<span id = "messageBtn" class = "messageBtn"></span>
 	<span id = "readCnt" class = "readCnt"></span>
 </span>
@@ -267,15 +257,7 @@ hr{
 			alarm();
 		}, 1000);
 	});
-	/* 스크롤따라 움직이는 Div */
-	var currentPosition = parseInt($('.messageIconWrap').css('top'));
-
-	$(window).scroll(function() {
-		var position = $(window).scrollTop();
-		$('.messageIconWrap').stop().animate({
-			'top' : position + currentPosition + 'px'
-		}, 1000);
-	});
+	
 	///////////////// 안읽은 메시지 알림/////////////////
 	function alarm(){
 		$.ajax({

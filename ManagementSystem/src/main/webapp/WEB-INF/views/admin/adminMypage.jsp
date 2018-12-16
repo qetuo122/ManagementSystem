@@ -391,6 +391,7 @@ position : absolute;
 </div>  
 </body>
 <script>
+var currentStore_id = ${storeSelectSession.store_id};
 var nameP =  /^[0-9a-zA-Z가-힣]{2,20}$/;
 var phoneP = /^01([0|1|6|7|8|9]?)?([0-9]{3,4})?([0-9]{4})$/;
       $(document).ready(function(){
@@ -572,8 +573,13 @@ var phoneP = /^01([0|1|6|7|8|9]?)?([0-9]{3,4})?([0-9]{4})$/;
                      store_id : store_id
                   },
                   success : function(data){
-                     alert("매장을 날리셨습니다. 다시 로그인해주세요");
-                     location.href = '<%=request.getContextPath()%>'
+                     alert("매장을 날리셨습니다.");
+                     // 내가 현재 접속중인 매장을 삭제하면 다시 로그인, 그외 매장을 삭제하면 페이지 새로고침
+                     if(currentStore_id == store_id){ 
+	                     location.href = '<%=request.getContextPath()%>'
+                     } else {
+                    	 location.reload();
+                     }
                   }
                }); // 삭제 ajax끝
             });

@@ -11,10 +11,20 @@
 .container {
 	margin-top: 20px;
 }
+
 #write {
 	float: right;
 	margin: 10px;
 }
+
+#titleTh {
+	width: 800px;
+}
+
+#dateTh {
+	width: 150px;
+}
+
 /* 공지사항 게시판 제목 오버 */
 .notice-title:hover {
 	text-decoration: underline;
@@ -22,6 +32,18 @@
 
 .table {
 	table-layout: fixed;
+}
+
+/* 모바일 웹 최적화 */
+@media ( max-width : 767px ) {
+	#titleTh {
+		width: 250px;
+	}
+
+	#dateTh {
+		font-size: 13px !important;
+		width: 60px;
+	}
 }
 </style>
 </head>
@@ -37,8 +59,8 @@
 		<table class="table">
 			<thead>
 				<tr class="text-center">
-					<th style="width: 85%">제목</th>
-					<th>등록일</th>
+					<th id="titleTh">제목</th>
+					<th id="dateTh">등록일</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -50,8 +72,8 @@
 				<c:if test="${!viewData.isEmpty()}">
 					<c:forEach var="list" items="${viewData.noticeList}">
 						<tr>
-							<td style="padding: 20px;"><a class="notice-title"
-								href="notice/${list.notice_id}">${list.notice_title}</a></td>
+							<td style="padding: 20px;">
+								<a class="notice-title" href="notice/${list.notice_id}">${list.notice_title}</a></td>
 							<td class="text-center">
 								<fmt:parseDate value="${list.notice_date}" pattern="yyyy-MM-dd HH:mm" var="date" /> 
 								<fmt:formatDate value="${date}" pattern="yyyy-MM-dd" />
@@ -113,8 +135,9 @@
 					</c:choose>
 
 					<!--가장맨앞으로-->
-					<li class="page-item"><a class="page-link"
-						href="notice?page=${viewData.pageTotalCount}">Last</a></li>
+					<li class="page-item">
+						<a class="page-link" href="notice?page=${viewData.pageTotalCount}">Last</a>
+					</li>
 				</ul>
 			</nav>
 		</c:if>

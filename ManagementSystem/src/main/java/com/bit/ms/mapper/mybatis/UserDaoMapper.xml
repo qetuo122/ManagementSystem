@@ -5,8 +5,16 @@
 <mapper namespace="com.bit.ms.dao.UserDaoInterface">
 	<!-- 소셜아이디를 구분시켜 회원가입 -->
 	<insert id="regUser" parameterType="userVO">
-		insert into userinfo (user_id, user_pw, user_name, user_phone, user_birth, user_email, ${divide})
-		values (#{user_id}, #{user_pw}, #{user_name}, #{user_phone}, #{user_birth}, #{user_email}, #{whatid})
+		<!-- 일반 회원가입 -->
+		<if test="divide == null">
+			insert into userinfo (user_id, user_pw, user_name, user_phone, user_birth, user_email)
+			values (#{user_id}, #{user_pw}, #{user_name}, #{user_phone}, #{user_birth}, #{user_email})
+		</if>
+		<!-- 소셜 회원가입 -->
+		<if test="divide != null">
+			insert into userinfo (user_id, user_pw, user_name, user_phone, user_birth, user_email, ${divide})
+			values (#{user_id}, #{user_pw}, #{user_name}, #{user_phone}, #{user_birth}, #{user_email}, #{whatid})
+		</if>
 	</insert>
 	<!-- 회원 인증키(난수) 생성 -->
 	<update id="GetKey" parameterType="Map">

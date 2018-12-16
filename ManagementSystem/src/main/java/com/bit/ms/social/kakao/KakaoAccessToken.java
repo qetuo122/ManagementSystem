@@ -17,9 +17,9 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class KakaoAccessToken {
-	public static JsonNode getAccessToken(String code) {
+	public static JsonNode getKakaoAccessToken(String code) {
 
-		final String RequestUrl = "https://kauth.kakao.com/oauth/token";
+		final String RequestUrl = "https://kauth.kakao.com/oauth/token"; // Host
 		final List<NameValuePair> postParams = new ArrayList<NameValuePair>();
 
 		postParams.add(new BasicNameValuePair("grant_type", "authorization_code"));
@@ -54,9 +54,8 @@ public class KakaoAccessToken {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			// clear resources
 		}
-		
+
 		return returnNode;
 	}
 }

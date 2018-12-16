@@ -23,14 +23,6 @@ public class MemberLogoutController {
 		if (userVO == null) { // admin이 로그아웃하면 adminLogin페이지로 보내줌
 			page = "redirect:/admin";
 		}
-		
-		else {
-			int resultCnt = service.deleteUsingInfo(userVO.getUser_id(), userVO.getStore_id());
-
-			if (resultCnt == 1) {
-				System.out.println("사용 중인 좌석 종료");
-			}
-		}
 
 		session.invalidate();
 		return page;

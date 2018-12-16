@@ -11,7 +11,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 public class EchoHandler extends TextWebSocketHandler {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(EchoHandler.class);
 	private List<WebSocketSession> sessionList = new ArrayList<WebSocketSession>();
 
@@ -26,16 +26,18 @@ public class EchoHandler extends TextWebSocketHandler {
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 		logger.info("{}로 부터 {} 받음", session.getId(), message.getPayload());
-		
-		for(WebSocketSession sess : sessionList){ // 소켓 세션에 물려있는 모든 이용자에게 메시지 전송(보낸이 포함)
-            sess.sendMessage(new TextMessage(message.getPayload()));
-        }
+
+		for (WebSocketSession sess : sessionList) { // 소켓 세션에 물려있는 모든 이용자에게 메시지 전송(보낸이 포함)
+			if (!session.getId().equals(sess)) { // 보낸이는 받지 않기 위한 조건문
+				sess.sendMessage(new TextMessage(message.getPayload()));
+			}
+		}
 	}
 
 	// 클라이언트와 연결을 끊었을 때 실행되는 메소드
 	@Override
-	  public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-	    sessionList.remove(session);
+	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+		sessionList.remove(session);
 		logger.info("{} 연결 끊김", session.getId());
 	}
 }

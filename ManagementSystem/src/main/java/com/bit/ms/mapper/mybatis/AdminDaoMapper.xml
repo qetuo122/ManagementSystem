@@ -58,7 +58,7 @@
 	</select>
 
 	<!--매장 추가 -->
-	<insert id="addStore" parameterType="StoreVO">
+	<insert id="addStore" keyProperty = "store_id" parameterType="StoreVO" useGeneratedKeys="true">
 		insert into store(store_name, store_zip, store_address, store_num, admin_id)
 		values (#{store_name}, #{store_zip}, #{store_address}, #{store_num}, #{admin_id})
 	</insert>

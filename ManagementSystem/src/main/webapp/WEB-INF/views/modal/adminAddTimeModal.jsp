@@ -67,7 +67,7 @@
 <div id="addTimeModal" class="add_time_modal">
 	<div class="modal_contents">
 		<h3>
-			<b>※ <span id="seatNum"></span>번 자리에 충전하실 시간을 선택하세요.
+			<b>◈ <span id="seatNum"></span>번 자리에 충전하실 시간을 선택하세요.
 			</b><span class="close">&times;</span>
 		</h3>
 
